@@ -10,14 +10,6 @@
 
 .board {
   border: 1px solid red;
-  min-height: 20rem;
   padding: 2rem;
-}
-
-.column {
-
-}
-
-.token {
-  
+  display: flex;
 }
