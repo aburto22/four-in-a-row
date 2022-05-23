@@ -25,7 +25,8 @@ module.exports = {
     'react/function-component-definition': [2, {
       namedComponents: 'arrow-function',
       unnamedComponents: 'arrow-function',
-    }]
+    }],
+    'import/prefer-default-export': [0],
   },
   ignorePatterns: ['.eslintrc.js'],
 };

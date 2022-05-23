@@ -1,3 +1,5 @@
+export type IPlayer = number;
+
 export type IToken = number;
 
 export type IColumn = Array<IToken | null>;

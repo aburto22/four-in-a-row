@@ -1,6 +1,6 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
-import { useAppDispatch } from '../../../hooks/redux';
+import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
 import { playToken } from '../../../slices/game';
 import Token from '../Token';
 import styles from './styles.module.scss';
@@ -12,6 +12,7 @@ interface ColumnProps {
 }
 
 const Column = ({ column, index }: ColumnProps) => {
+  const { active } = useAppSelector((state) => state.game);
   const dispatch = useAppDispatch();
 
   const handleClick = () => {
@@ -20,8 +21,12 @@ const Column = ({ column, index }: ColumnProps) => {
 
   const Tokens = column.map((t, i) => <Token key={i} token={t} />);
 
+  const buttonDisabled = !active;
+
+  console.log(buttonDisabled);
+
   return (
-    <button type="button" className={styles.column} onClick={handleClick}>
+    <button type="button" className={styles.column} onClick={handleClick} disabled={buttonDisabled}>
       {Tokens}
     </button>
   );
