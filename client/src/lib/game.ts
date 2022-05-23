@@ -95,3 +95,7 @@ export const checkWinner = (board: IBoard, player: IPlayer): boolean => {
 
   return false;
 };
+
+export const checkMatchNull = (board: IBoard): boolean => (
+  board.every((c) => c.every((t) => t !== null))
+);

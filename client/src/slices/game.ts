@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { IBoard, IPlayer } from '../types';
-import { checkWinner } from '../lib/game';
+import { checkWinner, checkMatchNull } from '../lib/game';
 
 interface InitialState {
   player: IPlayer,
@@ -24,6 +24,7 @@ const gameSlice = createSlice({
       ...state,
       player: state.player === 1 ? 2 : 1,
     }),
+    resetGame: () => initialState,
     playToken: (state, action: PayloadAction<number>) => {
       const columnIndex = action.payload;
       const currentBoard = state.board;
@@ -59,6 +60,15 @@ const gameSlice = createSlice({
         };
       }
 
+      if (checkMatchNull(newBoard)) {
+        return {
+          ...state,
+          board: newBoard,
+          message: 'It is a match null!',
+          active: false,
+        };
+      }
+
       return {
         ...state,
         board: newBoard,
@@ -69,6 +79,6 @@ const gameSlice = createSlice({
   },
 });
 
-export const { changeTurn, playToken } = gameSlice.actions;
+export const { changeTurn, playToken, resetGame } = gameSlice.actions;
 
 export default gameSlice.reducer;

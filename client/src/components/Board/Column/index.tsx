@@ -23,8 +23,6 @@ const Column = ({ column, index }: ColumnProps) => {
 
   const buttonDisabled = !active;
 
-  console.log(buttonDisabled);
-
   return (
     <button type="button" className={styles.column} onClick={handleClick} disabled={buttonDisabled}>
       {Tokens}
