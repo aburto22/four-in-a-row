@@ -1,0 +1,23 @@
+@import '../../variables.scss';
+
+.container {
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.board {
+  border: 1px solid red;
+  min-height: 20rem;
+  padding: 2rem;
+}
+
+.column {
+
+}
+
+.token {
+  
+}

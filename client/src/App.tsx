@@ -1,9 +1,11 @@
 import React from 'react';
-import './App.css';
+import Board from './components/Board';
+import styles from './App.module.scss';
 
 const App = () => (
-  <div className="App">
+  <div className={styles.app}>
     <h1>I am the app</h1>
+    <Board />
   </div>
 );
 
