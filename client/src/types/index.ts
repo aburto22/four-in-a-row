@@ -11,6 +11,16 @@ export interface IUser {
   id: string;
 }
 
+export interface IPlayTokenData {
+  activePlayer: string,
+  index: number,
+}
+
+export interface IStartGameData {
+  activePlayer: string,
+  players: IUser[],
+}
+
 // export type IColumn = [
 //   IToken | null,
 //   IToken | null,

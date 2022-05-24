@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
-import { useAppDispatch, useAppSelector } from '../../../hooks/redux';
-import { playToken } from '../../../slices/game';
+import socket from '../../../socket';
+import { useAppSelector } from '../../../hooks/redux';
 import Token from '../Token';
 import styles from './styles.module.scss';
 import { IColumn } from '../../../types';
@@ -13,10 +13,13 @@ interface ColumnProps {
 
 const Column = ({ column, index }: ColumnProps) => {
   const { active } = useAppSelector((state) => state.game);
-  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
 
   const handleClick = () => {
-    dispatch(playToken(index));
+    socket.emit('playToken', {
+      index,
+      userId: user?.id,
+    });
   };
 
   const Tokens = column.map((t, i) => <Token key={i} token={t} />);

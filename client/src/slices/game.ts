@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IBoard, IPlayer } from '../types';
+import { IBoard, IPlayer, IUser } from '../types';
 import { checkWinner, checkMatchNull } from '../lib/game';
 
 interface InitialState {
@@ -7,6 +7,7 @@ interface InitialState {
   board: IBoard,
   message: string,
   active: boolean,
+  players: IUser[],
 }
 
 const initialState: InitialState = {
@@ -14,6 +15,7 @@ const initialState: InitialState = {
   board: Array(7).fill(Array(6).fill(null)),
   message: 'waiting for another user before playing',
   active: false,
+  players: [],
 };
 
 const gameSlice = createSlice({
@@ -78,13 +80,18 @@ const gameSlice = createSlice({
         board: newBoard,
         player: state.player === 1 ? 2 : 1,
         message: '',
+        active: false,
       };
     },
+    setPlayers: (state, action: PayloadAction<IUser[]>) => ({
+      ...state,
+      players: action.payload,
+    }),
   },
 });
 
 export const {
-  changeTurn, playToken, resetGame, startGame,
+  changeTurn, playToken, resetGame, startGame, setPlayers,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

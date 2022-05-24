@@ -31,16 +31,38 @@ io.on('connection', (socket) => {
     const users = getUsers();
 
     if (users.length >= 2) {
-      const getStartingPlayer = users[Math.round(Math.random())].id;
+      const activePlayer = users[Math.round(Math.random())].id;
 
-      io.emit('startGame', getStartingPlayer);
+      const data = {
+        activePlayer,
+        players: getUsers(),
+      };
+
+      io.emit('startGame', data);
       io.emit('message', 'Game starts now!');
     }
   });
 
+  socket.on('playToken', (data) => {
+    const users = getUsers();
+
+    const activePlayer = users.find((u) => u.id !== data.userId)?.id;
+
+    io.emit('playToken', {
+      index: data.index,
+      activePlayer,
+    });
+  });
+
+  socket.on('resetGame', () => {
+    const users = getUsers();
+
+    const getStartingPlayer = users[Math.round(Math.random())].id;
+    io.emit('resetGame', getStartingPlayer);
+  });
+
   socket.on('disconnect', () => {
     removeUser(userId);
-    console.log(getUsers());
   });
 });
 
