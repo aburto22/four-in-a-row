@@ -12,8 +12,8 @@ interface InitialState {
 const initialState: InitialState = {
   player: 1,
   board: Array(7).fill(Array(6).fill(null)),
-  message: '',
-  active: true,
+  message: 'waiting for another user before playing',
+  active: false,
 };
 
 const gameSlice = createSlice({
@@ -23,6 +23,10 @@ const gameSlice = createSlice({
     changeTurn: (state) => ({
       ...state,
       player: state.player === 1 ? 2 : 1,
+    }),
+    startGame: (state) => ({
+      ...state,
+      active: true,
     }),
     resetGame: () => initialState,
     playToken: (state, action: PayloadAction<number>) => {
@@ -79,6 +83,8 @@ const gameSlice = createSlice({
   },
 });
 
-export const { changeTurn, playToken, resetGame } = gameSlice.actions;
+export const {
+  changeTurn, playToken, resetGame, startGame,
+} = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -6,6 +6,11 @@ export type IColumn = Array<IToken | null>;
 
 export type IBoard = Array<IColumn>;
 
+export interface IUser {
+  name: string;
+  id: string;
+}
+
 // export type IColumn = [
 //   IToken | null,
 //   IToken | null,
