@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
 import { v4 } from 'uuid';
@@ -16,6 +17,8 @@ const io = new Server(server, {
     origin: 'http://localhost:3000',
   },
 });
+
+app.use(express.static(path.join('..', 'client', 'build')));
 
 io.on('connection', (socket) => {
   const userId = socket.id;
