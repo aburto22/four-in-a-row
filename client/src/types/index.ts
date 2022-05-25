@@ -20,3 +20,9 @@ export interface IStartGameData {
   activePlayer: string,
   players: IUser[],
 }
+
+export interface ISetGameData {
+  players: IUser[],
+  myId: string,
+  activePlayer: string,
+}

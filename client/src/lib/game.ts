@@ -1,4 +1,4 @@
-import { IBoard, IPlayer } from '../types';
+import { IBoard, IPlayer, IUser } from '../types';
 
 const checkHorizontalWinner = (board: IBoard, player: IPlayer): boolean => {
   const columnHeight = board[0].length;
@@ -77,19 +77,10 @@ const checkDiagonal2Winner = (board: IBoard, player: IPlayer): boolean => {
 };
 
 export const checkWinner = (board: IBoard, player: IPlayer): boolean => {
-  if (checkHorizontalWinner(board, player)) {
-    return true;
-  }
-
-  if (checkVerticalWinner(board, player)) {
-    return true;
-  }
-
-  if (checkDiagonal1Winner(board, player)) {
-    return true;
-  }
-
-  if (checkDiagonal2Winner(board, player)) {
+  if (checkHorizontalWinner(board, player)
+    || checkVerticalWinner(board, player)
+    || checkDiagonal1Winner(board, player)
+    || checkDiagonal2Winner(board, player)) {
     return true;
   }
 
@@ -99,3 +90,51 @@ export const checkWinner = (board: IBoard, player: IPlayer): boolean => {
 export const checkMatchNull = (board: IBoard): boolean => (
   board.every((c) => c.every((t) => t !== null))
 );
+
+export const addToken = (board: IBoard, index: number, player: IPlayer): IBoard | null => {
+  const columnIndex = index;
+  const currentBoard = board;
+  const currentColumn = currentBoard[columnIndex];
+  const rowIndex = currentColumn.findIndex((t) => t === null);
+
+  if (rowIndex === -1) {
+    return null;
+  }
+
+  const newColumn = currentColumn.map((t, i) => {
+    if (i === rowIndex) {
+      return player;
+    }
+    return t;
+  });
+  return currentBoard.map((c, i) => {
+    if (i === columnIndex) {
+      return newColumn;
+    }
+    return c;
+  });
+};
+
+export const getActivePlayerMessage = (
+  players: IUser[],
+  activePlayer: string,
+  myId: string,
+): string => {
+  if (activePlayer === myId) {
+    return 'It\'s your turn!';
+  }
+  const activePlayerName = players.find((p) => p.id === activePlayer)?.name;
+  return `${activePlayerName} is playing`;
+};
+
+export const getWinnerMessage = (
+  players: IUser[],
+  activePlayer: string,
+  myId: string,
+): string => {
+  if (activePlayer !== myId) {
+    return 'You have won this match!';
+  }
+  const activePlayerName = players.find((p) => p.id !== activePlayer)?.name;
+  return `${activePlayerName} has won the game`;
+};

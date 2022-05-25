@@ -2,7 +2,7 @@ import { io } from 'socket.io-client';
 import store from '../store';
 import { setUpUser } from '../slices/user';
 import {
-  startGame, playToken, resetGame, setPlayers,
+  playToken, resetGame, setGame,
 } from '../slices/game';
 import type { IUser, IPlayTokenData, IStartGameData } from '../types';
 
@@ -15,27 +15,16 @@ socket.emit('setUpPlayer', 'Player', (data: IUser) => {
 socket.on('message', (message: string) => console.log(message));
 
 socket.on('startGame', ({ activePlayer, players }: IStartGameData) => {
-  store.dispatch(setPlayers(players));
-
-  if (store.getState().user?.id === activePlayer) {
-    store.dispatch(startGame());
-  }
+  const myId = store.getState().user?.id || '';
+  store.dispatch(setGame({ players, myId, activePlayer }));
 });
 
-socket.on('playToken', (data: IPlayTokenData) => {
-  store.dispatch(playToken(data.index));
-
-  if (store.getState().user?.id === data.activePlayer) {
-    store.dispatch(startGame());
-  }
+socket.on('playToken', ({ index, activePlayer }: IPlayTokenData) => {
+  store.dispatch(playToken({ index, activePlayer }));
 });
 
-socket.on('resetGame', (id: string) => {
-  store.dispatch(resetGame());
-
-  if (store.getState().user?.id === id) {
-    store.dispatch(startGame());
-  }
+socket.on('resetGame', ({ activePlayer }: IStartGameData) => {
+  store.dispatch(resetGame(activePlayer));
 });
 
 export default socket;

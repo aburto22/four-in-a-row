@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
 
       const data = {
         activePlayer,
-        players: getUsers(),
+        players: users,
       };
 
       io.emit('startGame', data);
@@ -56,9 +56,15 @@ io.on('connection', (socket) => {
 
   socket.on('resetGame', () => {
     const users = getUsers();
+    const activePlayer = users[Math.round(Math.random())].id;
+    console.log(users);
 
-    const getStartingPlayer = users[Math.round(Math.random())].id;
-    io.emit('resetGame', getStartingPlayer);
+    const data = {
+      activePlayer,
+      players: users,
+    };
+
+    io.emit('resetGame', data);
   });
 
   socket.on('disconnect', () => {

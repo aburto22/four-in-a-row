@@ -24,10 +24,17 @@ const Column = ({ column, index }: ColumnProps) => {
 
   const Tokens = column.map((t, i) => <Token key={i} token={t} />);
 
-  const buttonDisabled = !active;
+  const canPlay = column.some((t) => t === null);
+
+  const buttonDisabled = !active || !canPlay;
 
   return (
-    <button type="button" className={styles.column} onClick={handleClick} disabled={buttonDisabled}>
+    <button
+      type="button"
+      className={`${styles.column} ${!buttonDisabled && styles.columnActive}`}
+      onClick={handleClick}
+      disabled={buttonDisabled}
+    >
       {Tokens}
     </button>
   );

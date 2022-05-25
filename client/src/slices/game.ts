@@ -1,67 +1,51 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IBoard, IPlayer, IUser } from '../types';
-import { checkWinner, checkMatchNull } from '../lib/game';
+import type {
+  IBoard, IUser, IPlayTokenData, ISetGameData,
+} from '../types';
+import {
+  checkWinner, checkMatchNull, addToken, getActivePlayerMessage, getWinnerMessage,
+} from '../lib/game';
 
 interface InitialState {
-  player: IPlayer,
   board: IBoard,
   message: string,
   active: boolean,
   players: IUser[],
+  myId: string,
 }
 
 const initialState: InitialState = {
-  player: 1,
   board: Array(7).fill(Array(6).fill(null)),
   message: 'waiting for another user before playing',
   active: false,
   players: [],
+  myId: '',
 };
 
 const gameSlice = createSlice({
   name: 'game',
   initialState,
   reducers: {
-    changeTurn: (state) => ({
+    resetGame: (state, action: PayloadAction<string>) => ({
       ...state,
-      player: state.player === 1 ? 2 : 1,
+      board: initialState.board,
+      active: action.payload === state.myId,
+      message: getActivePlayerMessage(state.players, action.payload, state.myId),
     }),
-    startGame: (state) => ({
-      ...state,
-      active: true,
-    }),
-    resetGame: () => initialState,
-    playToken: (state, action: PayloadAction<number>) => {
-      const columnIndex = action.payload;
-      const currentBoard = state.board;
-      const currentColumn = currentBoard[columnIndex];
-      const rowIndex = currentColumn.findIndex((t) => t === null);
+    playToken: (state, action: PayloadAction<IPlayTokenData>) => {
+      const { index, activePlayer } = action.payload;
+      const playerToken = state.players.findIndex((p) => p.id !== activePlayer) + 1;
+      const newBoard = addToken(state.board, index, playerToken);
 
-      if (rowIndex === -1) {
-        return {
-          ...state,
-          message: 'Cannot play in this column. Choose another one',
-        };
+      if (!newBoard) {
+        return state;
       }
 
-      const newColumn = currentColumn.map((t, i) => {
-        if (i === rowIndex) {
-          return state.player;
-        }
-        return t;
-      });
-      const newBoard = currentBoard.map((c, i) => {
-        if (i === columnIndex) {
-          return newColumn;
-        }
-        return c;
-      });
-
-      if (checkWinner(newBoard, state.player)) {
+      if (checkWinner(newBoard, playerToken)) {
         return {
           ...state,
           board: newBoard,
-          message: `Player ${state.player} has won the game!`,
+          message: getWinnerMessage(state.players, activePlayer, state.myId),
           active: false,
         };
       }
@@ -78,20 +62,26 @@ const gameSlice = createSlice({
       return {
         ...state,
         board: newBoard,
-        player: state.player === 1 ? 2 : 1,
-        message: '',
-        active: false,
+        active: activePlayer === state.myId,
+        message: getActivePlayerMessage(state.players, activePlayer, state.myId),
       };
     },
-    setPlayers: (state, action: PayloadAction<IUser[]>) => ({
-      ...state,
-      players: action.payload,
-    }),
+    setGame: (state, action: PayloadAction<ISetGameData>) => {
+      const { players, myId, activePlayer } = action.payload;
+
+      return {
+        ...state,
+        players,
+        myId,
+        message: getActivePlayerMessage(players, activePlayer, myId),
+        active: activePlayer === myId,
+      };
+    },
   },
 });
 
 export const {
-  changeTurn, playToken, resetGame, startGame, setPlayers,
+  playToken, resetGame, setGame,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

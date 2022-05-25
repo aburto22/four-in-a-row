@@ -6,7 +6,7 @@ import Column from './Column';
 import styles from './styles.module.scss';
 
 const Board = () => {
-  const { player, board, message } = useAppSelector((state) => state.game);
+  const { board, message } = useAppSelector((state) => state.game);
   const user = useAppSelector((state) => state.user);
 
   const Columns = board.map((c, i) => <Column key={i} column={c} index={i} />);
@@ -18,8 +18,7 @@ const Board = () => {
   return (
     <div className={styles.container}>
       {user && <h1>{`You are: ${user.name}`}</h1>}
-      <h2 className={styles.title}>{`Player number ${player} is playing`}</h2>
-      <p className={styles.message}>{message}</p>
+      <p className={styles.title}>{message}</p>
       <div className={styles.board}>
         {Columns}
       </div>
