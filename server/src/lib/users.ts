@@ -1,14 +1,13 @@
-import { v4 } from 'uuid';
 import type { IUser } from '../types';
 
 let users: IUser[] = [];
 
 export const getUsers = () => users;
 
-export const addUser = () => {
+export const addUser = (id: string) => {
   const newUser = {
     name: `Player ${users.length + 1}`,
-    id: v4(),
+    id,
   };
 
   users = [...users, newUser];

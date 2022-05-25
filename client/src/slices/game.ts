@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import type {
-  IBoard, IUser, IPlayTokenData, ISetGameData,
+  IBoard, IUser, IPlayTokenData, IStartGameData,
 } from '../types';
 import {
-  checkWinner, checkMatchNull, addToken, getActivePlayerMessage, getWinnerMessage,
+  checkWinner, checkMatchNull, addToken, getActivePlayerMessage, getWinnerMessage, getPlayerToken,
 } from '../lib/game';
 
 interface InitialState {
@@ -34,7 +34,7 @@ const gameSlice = createSlice({
     }),
     playToken: (state, action: PayloadAction<IPlayTokenData>) => {
       const { index, activePlayer } = action.payload;
-      const playerToken = state.players.findIndex((p) => p.id !== activePlayer) + 1;
+      const playerToken = getPlayerToken(state.players, activePlayer);
       const newBoard = addToken(state.board, index, playerToken);
 
       if (!newBoard) {
@@ -66,7 +66,7 @@ const gameSlice = createSlice({
         message: getActivePlayerMessage(state.players, activePlayer, state.myId),
       };
     },
-    setGame: (state, action: PayloadAction<ISetGameData>) => {
+    startGame: (state, action: PayloadAction<IStartGameData>) => {
       const { players, myId, activePlayer } = action.payload;
 
       return {
@@ -81,7 +81,7 @@ const gameSlice = createSlice({
 });
 
 export const {
-  playToken, resetGame, setGame,
+  playToken, resetGame, startGame,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

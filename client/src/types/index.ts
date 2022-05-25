@@ -1,6 +1,4 @@
-export type IPlayer = number;
-
-export type IToken = number;
+export type IToken = string;
 
 export type IColumn = Array<IToken | null>;
 
@@ -19,10 +17,5 @@ export interface IPlayTokenData {
 export interface IStartGameData {
   activePlayer: string,
   players: IUser[],
-}
-
-export interface ISetGameData {
-  players: IUser[],
   myId: string,
-  activePlayer: string,
 }

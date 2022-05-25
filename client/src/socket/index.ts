@@ -2,7 +2,7 @@ import { io } from 'socket.io-client';
 import store from '../store';
 import { setUpUser } from '../slices/user';
 import {
-  playToken, resetGame, setGame,
+  playToken, resetGame, startGame,
 } from '../slices/game';
 import type { IUser, IPlayTokenData, IStartGameData } from '../types';
 
@@ -16,7 +16,7 @@ socket.on('message', (message: string) => console.log(message));
 
 socket.on('startGame', ({ activePlayer, players }: IStartGameData) => {
   const myId = store.getState().user?.id || '';
-  store.dispatch(setGame({ players, myId, activePlayer }));
+  store.dispatch(startGame({ players, myId, activePlayer }));
 });
 
 socket.on('playToken', ({ index, activePlayer }: IPlayTokenData) => {

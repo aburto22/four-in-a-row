@@ -15,7 +15,7 @@ const io = new Server(server, {
 });
 
 io.on('connection', (socket) => {
-  let userId: string | undefined;
+  const userId = socket.id;
 
   const welcomeMessage = io.sockets.sockets.size < 2
     ? 'Waiting for another user to connect.'
@@ -23,8 +23,8 @@ io.on('connection', (socket) => {
 
   socket.emit('message', welcomeMessage);
 
-  socket.on('setUpPlayer', (name, callback) => {
-    userId = addUser();
+  socket.on('setUpPlayer', async (name, callback) => {
+    addUser(userId);
     const user = getUserById(userId);
     callback(user);
 
@@ -57,7 +57,6 @@ io.on('connection', (socket) => {
   socket.on('resetGame', () => {
     const users = getUsers();
     const activePlayer = users[Math.round(Math.random())].id;
-    console.log(users);
 
     const data = {
       activePlayer,
