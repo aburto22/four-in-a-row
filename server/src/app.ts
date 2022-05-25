@@ -38,7 +38,10 @@ io.on('connection', (socket) => {
         players: users,
       };
 
-      io.emit('startGame', data);
+      io.of('/').sockets.forEach((s) => {
+        s.emit('startGame', { ...data, myId: s.id });
+      });
+
       io.emit('message', 'Game starts now!');
     }
   });
@@ -68,6 +71,7 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     removeUser(userId);
+    io.of('/').sockets.forEach((s) => console.log(s.id));
   });
 });
 

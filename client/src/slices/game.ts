@@ -69,6 +69,9 @@ const gameSlice = createSlice({
     startGame: (state, action: PayloadAction<IStartGameData>) => {
       const { players, myId, activePlayer } = action.payload;
 
+      console.log(myId);
+      console.log(activePlayer);
+
       return {
         ...state,
         players,

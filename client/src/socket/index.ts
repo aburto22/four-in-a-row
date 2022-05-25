@@ -14,8 +14,7 @@ socket.emit('setUpPlayer', 'Player', (data: IUser) => {
 
 socket.on('message', (message: string) => console.log(message));
 
-socket.on('startGame', ({ activePlayer, players }: IStartGameData) => {
-  const myId = store.getState().user?.id || '';
+socket.on('startGame', ({ activePlayer, myId, players }: IStartGameData) => {
   store.dispatch(startGame({ players, myId, activePlayer }));
 });
 
