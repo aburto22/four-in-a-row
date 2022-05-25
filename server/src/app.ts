@@ -23,9 +23,14 @@ app.use(express.static(path.join('..', 'client', 'build')));
 io.on('connection', (socket) => {
   const userId = socket.id;
 
-  const welcomeMessage = io.sockets.sockets.size < 2
-    ? 'Waiting for another user to connect.'
-    : 'Get ready!';
+  const welcomeMessage = {
+    user: chatBot,
+    id: v4(),
+    text: io.sockets.sockets.size < 2
+      ? 'Waiting for another user to connect.'
+      : 'Get ready!',
+    time: Date(),
+  };
 
   socket.emit('message', welcomeMessage);
 
@@ -35,6 +40,15 @@ io.on('connection', (socket) => {
     callback(user);
 
     const users = getUsers();
+
+    const newPlayerMessage = {
+      user: chatBot,
+      id: v4(),
+      text: `${user?.name} has joined the game.`,
+      time: Date(),
+    };
+
+    socket.broadcast.emit('message', newPlayerMessage);
 
     if (users.length >= 2) {
       const activePlayer = users[Math.round(Math.random())].id;
@@ -72,6 +86,10 @@ io.on('connection', (socket) => {
 
   socket.on('resetGame', () => {
     const users = getUsers();
+    if (users.length < 2) {
+      return;
+    }
+
     const activePlayer = users[Math.round(Math.random())].id;
 
     const data = {
@@ -80,10 +98,30 @@ io.on('connection', (socket) => {
     };
 
     io.emit('resetGame', data);
+
+    const message = {
+      user: chatBot,
+      id: v4(),
+      text: 'Game has restarted.',
+      time: Date(),
+    };
+
+    io.emit('message', message);
   });
 
   socket.on('disconnect', () => {
+    const username = getUserById(userId)?.name;
     removeUser(userId);
+    io.emit('quitGame');
+
+    const message = {
+      user: chatBot,
+      id: v4(),
+      text: `${username} has quit the game. Waiting for another player to join.`,
+      time: Date(),
+    };
+
+    io.emit('message', message);
   });
 });
 

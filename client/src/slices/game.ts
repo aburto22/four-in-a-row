@@ -69,9 +69,6 @@ const gameSlice = createSlice({
     startGame: (state, action: PayloadAction<IStartGameData>) => {
       const { players, myId, activePlayer } = action.payload;
 
-      console.log(myId);
-      console.log(activePlayer);
-
       return {
         ...state,
         players,
@@ -80,11 +77,12 @@ const gameSlice = createSlice({
         active: activePlayer === myId,
       };
     },
+    quitGame: () => initialState,
   },
 });
 
 export const {
-  playToken, resetGame, startGame,
+  playToken, resetGame, startGame, quitGame,
 } = gameSlice.actions;
 
 export default gameSlice.reducer;

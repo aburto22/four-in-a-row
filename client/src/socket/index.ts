@@ -2,7 +2,7 @@ import { io } from 'socket.io-client';
 import store from '../store';
 import { setUpUser } from '../slices/user';
 import {
-  playToken, resetGame, startGame,
+  playToken, resetGame, startGame, quitGame,
 } from '../slices/game';
 import { addMessage } from '../slices/chat';
 import type {
@@ -29,6 +29,10 @@ socket.on('playToken', ({ index, activePlayer }: IPlayTokenData) => {
 
 socket.on('resetGame', ({ activePlayer }: IStartGameData) => {
   store.dispatch(resetGame(activePlayer));
+});
+
+socket.on('quitGame', () => {
+  store.dispatch(quitGame());
 });
 
 export default socket;

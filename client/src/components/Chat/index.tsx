@@ -9,7 +9,7 @@ const Chat = () => {
   return (
     <section className={styles.section}>
       <div className={styles.chat}>
-        {messages.map((m) => <Message key={m.id} message={m} />)}
+        {messages.length > 0 && messages.map((m) => <Message key={m.id} message={m} />)}
       </div>
     </section>
   );
