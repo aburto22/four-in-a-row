@@ -1,12 +1,15 @@
 import express from 'express';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import { v4 } from 'uuid';
 import {
   getUsers, addUser, getUserById, removeUser,
 } from './lib/users';
 
 const app = express();
 const server = createServer(app);
+
+const chatBot = 'Chat Bot';
 
 const io = new Server(server, {
   cors: {
@@ -42,7 +45,14 @@ io.on('connection', (socket) => {
         s.emit('startGame', { ...data, myId: s.id });
       });
 
-      io.emit('message', 'Game starts now!');
+      const message = {
+        user: chatBot,
+        id: v4(),
+        text: 'Game starts now!',
+        time: Date(),
+      };
+
+      io.emit('message', message);
     }
   });
 
@@ -71,7 +81,6 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     removeUser(userId);
-    io.of('/').sockets.forEach((s) => console.log(s.id));
   });
 });
 

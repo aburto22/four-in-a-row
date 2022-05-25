@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit';
 import game from '../slices/game';
 import user from '../slices/user';
+import chat from '../slices/chat';
 
 const store = configureStore({
   reducer: {
     game,
     user,
+    chat,
   },
 });
 

@@ -4,15 +4,20 @@ import { setUpUser } from '../slices/user';
 import {
   playToken, resetGame, startGame,
 } from '../slices/game';
-import type { IUser, IPlayTokenData, IStartGameData } from '../types';
+import { addMessage } from '../slices/chat';
+import type {
+  IUser, IPlayTokenData, IStartGameData, IMessage,
+} from '../types';
 
-const socket = io('http://localhost:8080');
+const socketUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080';
+
+const socket = io(socketUrl);
 
 socket.emit('setUpPlayer', 'Player', (data: IUser) => {
   store.dispatch(setUpUser(data));
 });
 
-socket.on('message', (message: string) => console.log(message));
+socket.on('message', (message: IMessage) => store.dispatch(addMessage(message)));
 
 socket.on('startGame', ({ activePlayer, myId, players }: IStartGameData) => {
   store.dispatch(startGame({ players, myId, activePlayer }));

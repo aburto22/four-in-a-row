@@ -19,3 +19,10 @@ export interface IStartGameData {
   players: IUser[],
   myId: string,
 }
+
+export interface IMessage {
+  user: string,
+  text: string,
+  time: string,
+  id: string,
+}
