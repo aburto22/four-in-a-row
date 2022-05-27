@@ -25,6 +25,7 @@ const Home = () => {
           name="username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
+          required
         />
       </label>
       <button type="submit">Start!</button>

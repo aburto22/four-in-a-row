@@ -30,12 +30,15 @@ io.on('connection', (socket) => {
 
   socket.emit('message', createMessage(chatBot, welcomeText));
 
-  socket.on('setUpPlayer', async (name, callback) => {
-    addUser(userId);
+  socket.on('setUpPlayer', async (name) => {
+    addUser(userId, name);
     const user = getUserById(userId);
-    callback(user);
+
+    socket.emit('assignUserId', user?.id);
 
     const users = getUsers();
+
+    console.log(users);
 
     socket.broadcast.emit('message', createMessage(chatBot, `${user?.name} has joined the game.`));
 

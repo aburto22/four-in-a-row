@@ -4,9 +4,9 @@ let users: IUser[] = [];
 
 export const getUsers = () => users;
 
-export const addUser = (id: string) => {
+export const addUser = (id: string, name: string) => {
   const newUser = {
-    name: `Player ${users.length + 1}`,
+    name: name || `Player ${users.length + 1}`,
     id,
   };
 

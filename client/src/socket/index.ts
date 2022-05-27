@@ -6,15 +6,15 @@ import {
 } from '../slices/game';
 import { addMessage } from '../slices/chat';
 import type {
-  IUser, IPlayTokenData, IStartGameData, IMessage,
+  IPlayTokenData, IStartGameData, IMessage,
 } from '../types';
 
 const socketUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:8080';
 
 const socket = io(socketUrl);
 
-socket.emit('setUpPlayer', 'Player', (data: IUser) => {
-  store.dispatch(setUserId(data.id));
+socket.on('assignUserId', (id: string) => {
+  store.dispatch(setUserId(id));
 });
 
 socket.on('message', (message: IMessage) => store.dispatch(addMessage(message)));
