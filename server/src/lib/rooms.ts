@@ -53,6 +53,14 @@ export const createRoom = () => {
 };
 
 export const removeRoom = (roomId: string) => {
+  const room = getRoomById(roomId);
+
+  if (!room) {
+    return;
+  }
+
+  room.users.forEach((u) => addUserToWaitingRoom(u.id));
+
   rooms = rooms.filter((r) => r.id !== roomId);
 };
 

@@ -12,6 +12,7 @@ import {
   createRoom,
   getRoomById,
   getRoomByUserId,
+  removeRoom,
 } from './lib/rooms';
 import { createMessage } from './lib/messages';
 import type { PlayTokenData, MessageData } from './types';
@@ -143,6 +144,7 @@ io.on('connection', (socket) => {
     }
 
     removeUserFromRoom(room.id, userId);
+    removeRoom(room.id);
 
     if (room.type === 'waiting') {
       return;
