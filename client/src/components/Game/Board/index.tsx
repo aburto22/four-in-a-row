@@ -6,7 +6,7 @@ import Column from '../Column';
 import styles from './styles.module.scss';
 
 const Board = () => {
-  const { board, message, players } = useAppSelector((state) => state.game);
+  const { board, message, status } = useAppSelector((state) => state.game);
   const user = useAppSelector((state) => state.user);
 
   const Columns = board.map((c, i) => <Column key={i} column={c} index={i} />);
@@ -15,7 +15,7 @@ const Board = () => {
     socket.emit('resetGame');
   };
 
-  const buttonDisabled = players.length < 2;
+  const buttonDisabled = status !== 'winner' && status !== 'matchNull';
 
   return (
     <div className={styles.container}>
@@ -30,7 +30,7 @@ const Board = () => {
         onClick={handleReset}
         disabled={buttonDisabled}
       >
-        Reset game
+        Play again
       </button>
     </div>
   );

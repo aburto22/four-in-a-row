@@ -38,8 +38,6 @@ io.on('connection', (socket) => {
 
     const users = getUsers();
 
-    console.log(users);
-
     socket.broadcast.emit('message', createMessage(chatBot, `${user?.name} has joined the game.`));
 
     if (users.length >= 2) {
@@ -58,13 +56,13 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('playToken', (data: PlayTokenData) => {
+  socket.on('playToken', ({ index, userId: uId }: PlayTokenData) => {
     const users = getUsers();
 
-    const activePlayer = users.find((u) => u.id !== data.userId)?.id;
+    const activePlayer = users.find((u) => u.id !== uId)?.id;
 
     io.emit('playToken', {
-      index: data.index,
+      index,
       activePlayer,
     });
   });

@@ -33,7 +33,7 @@ const gameSlice = createSlice({
       board: initialState.board,
       isPlayerTurn: action.payload === state.myId,
       message: getActivePlayerMessage(state.players, action.payload, state.myId),
-      statys: 'playing',
+      status: 'playing',
     }),
     playToken: (state, action: PayloadAction<IPlayTokenData>) => {
       const { index, activePlayer } = action.payload;
