@@ -1,8 +1,8 @@
 import React from 'react';
-import Message from './Message';
-import { useAppSelector } from '../../hooks/redux';
+import Message from '../Message';
+import { useAppSelector } from '../../../hooks/redux';
 import styles from './styles.module.scss';
-import Form from './Form';
+import Form from '../Form';
 
 const Chat = () => {
   const messages = useAppSelector((state) => state.chat);

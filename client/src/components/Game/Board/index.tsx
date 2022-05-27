@@ -1,8 +1,8 @@
 /* eslint-disable react/no-array-index-key */
 import React from 'react';
-import { useAppSelector } from '../../hooks/redux';
-import socket from '../../socket';
-import Column from './Column';
+import { useAppSelector } from '../../../hooks/redux';
+import socket from '../../../socket';
+import Column from '../Column';
 import styles from './styles.module.scss';
 
 const Board = () => {

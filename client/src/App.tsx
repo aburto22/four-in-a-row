@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
-import Board from './components/Board';
-import Chat from './components/Chat';
+import Game from './components/Game';
 import io from './socket';
 import styles from './App.module.scss';
 
@@ -15,15 +14,7 @@ const App = () => {
     <div className={styles.app}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route
-          path="/waiting"
-          element={(
-            <>
-              <Board />
-              <Chat />
-            </>
-          )}
-        />
+        <Route path="/waiting" element={<Game />} />
       </Routes>
     </div>
   );
