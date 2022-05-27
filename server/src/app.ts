@@ -134,6 +134,7 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
+    const { id: waitingRoomId } = getWaitingRoom();
     const username = getUserById(userId)?.name;
     const room = getRoomByUserId(userId);
     removeUser(userId);
@@ -144,17 +145,23 @@ io.on('connection', (socket) => {
     }
 
     removeUserFromRoom(room.id, userId);
+
+    const otherUsers = getRoomById(room.id)?.users;
+
     removeRoom(room.id);
 
     if (room.type === 'waiting') {
       return;
     }
 
-    io.to(room.id).emit('quitGame');
-
-    const text = `${username} has quit the game. Waiting for another player to join.`;
-
-    io.to(room.id).emit('message', createMessage(chatBot, text));
+    otherUsers?.forEach((u) => {
+      const s = io.sockets.sockets.get(u.id);
+      s?.emit('quitGame');
+      const text = `${username} has quit the game. Waiting for another player to join.`;
+      s?.emit('message', createMessage(chatBot, text));
+      s?.leave(room.id);
+      s?.join(waitingRoomId);
+    });
   });
 
   socket.on('message', ({ user, text }: MessageData) => {

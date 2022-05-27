@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store';
-import './index.scss';
+import GlobalStyles from './globalStyles';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
@@ -12,6 +12,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <Provider store={store}>
+    <GlobalStyles />
     <BrowserRouter>
       <App />
     </BrowserRouter>

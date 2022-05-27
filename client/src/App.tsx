@@ -3,15 +3,15 @@ import { Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
 import Game from './components/Game';
 import PrivateRoute from './components/PrivateRoute';
-import styles from './App.module.scss';
+import { StyledDiv } from './App.styles';
 
 const App = () => (
-  <div className={styles.app}>
+  <StyledDiv>
     <Routes>
       <Route path="/" element={<Home />} />
       <Route path="/waiting" element={<PrivateRoute><Game /></PrivateRoute>} />
     </Routes>
-  </div>
+  </StyledDiv>
 );
 
 export default App;
