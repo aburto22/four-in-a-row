@@ -12,3 +12,9 @@ export interface MessageData {
   user: string,
   text: string,
 }
+
+export interface IRoom {
+  id: string,
+  type: 'waiting' | 'game',
+  users: IUser[],
+}
