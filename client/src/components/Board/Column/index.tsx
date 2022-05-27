@@ -12,7 +12,7 @@ interface ColumnProps {
 }
 
 const Column = ({ column, index }: ColumnProps) => {
-  const { active } = useAppSelector((state) => state.game);
+  const { isPlayerTurn } = useAppSelector((state) => state.game);
   const user = useAppSelector((state) => state.user);
 
   const handleClick = () => {
@@ -26,7 +26,7 @@ const Column = ({ column, index }: ColumnProps) => {
 
   const canPlay = column.some((t) => t === null);
 
-  const buttonDisabled = !active || !canPlay;
+  const buttonDisabled = !isPlayerTurn || !canPlay;
 
   return (
     <button

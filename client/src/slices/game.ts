@@ -9,7 +9,7 @@ import {
 interface InitialState {
   board: IBoard,
   message: string,
-  active: boolean,
+  isPlayerTurn: boolean,
   players: IUser[],
   myId: string,
 }
@@ -17,7 +17,7 @@ interface InitialState {
 const initialState: InitialState = {
   board: Array(7).fill(Array(6).fill(null)),
   message: 'waiting for another user before playing',
-  active: false,
+  isPlayerTurn: false,
   players: [],
   myId: '',
 };
@@ -29,7 +29,7 @@ const gameSlice = createSlice({
     resetGame: (state, action: PayloadAction<string>) => ({
       ...state,
       board: initialState.board,
-      active: action.payload === state.myId,
+      isPlayerTurn: action.payload === state.myId,
       message: getActivePlayerMessage(state.players, action.payload, state.myId),
     }),
     playToken: (state, action: PayloadAction<IPlayTokenData>) => {
@@ -46,7 +46,7 @@ const gameSlice = createSlice({
           ...state,
           board: newBoard,
           message: getWinnerMessage(state.players, activePlayer, state.myId),
-          active: false,
+          isPlayerTurn: false,
         };
       }
 
@@ -55,14 +55,14 @@ const gameSlice = createSlice({
           ...state,
           board: newBoard,
           message: 'It is a match null!',
-          active: false,
+          isPlayerTurn: false,
         };
       }
 
       return {
         ...state,
         board: newBoard,
-        active: activePlayer === state.myId,
+        isPlayerTurn: activePlayer === state.myId,
         message: getActivePlayerMessage(state.players, activePlayer, state.myId),
       };
     },
@@ -74,7 +74,7 @@ const gameSlice = createSlice({
         players,
         myId,
         message: getActivePlayerMessage(players, activePlayer, myId),
-        active: activePlayer === myId,
+        isPlayerTurn: activePlayer === myId,
       };
     },
     quitGame: () => initialState,
