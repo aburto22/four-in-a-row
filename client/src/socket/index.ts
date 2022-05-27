@@ -32,6 +32,10 @@ socket.on('playToken', ({ index, activePlayer }: IPlayTokenData) => {
     const winnerId = gameState.players.find((p) => p.id !== activePlayer)?.id;
     socket.emit('winner', winnerId);
   }
+
+  if (gameState.status === 'matchNull') {
+    socket.emit('matchNull');
+  }
 });
 
 socket.on('resetGame', ({ activePlayer }: IStartGameData) => {

@@ -2,10 +2,10 @@ import express from 'express';
 import path from 'path';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
-import { v4 } from 'uuid';
 import {
   getUsers, addUser, getUserById, removeUser,
 } from './lib/users';
+import { createMessage } from './lib/messages';
 
 const app = express();
 const server = createServer(app);
@@ -23,16 +23,11 @@ app.use(express.static(path.join('..', 'client', 'build')));
 io.on('connection', (socket) => {
   const userId = socket.id;
 
-  const welcomeMessage = {
-    user: chatBot,
-    id: v4(),
-    text: io.sockets.sockets.size < 2
-      ? 'Waiting for another user to connect.'
-      : 'Get ready!',
-    time: Date(),
-  };
+  const welcomeText = io.sockets.sockets.size < 2
+    ? 'Welcome! Waiting for another user to connect.'
+    : 'Welcome!';
 
-  socket.emit('message', welcomeMessage);
+  socket.emit('message', createMessage(chatBot, welcomeText));
 
   socket.on('setUpPlayer', async (name, callback) => {
     addUser(userId);
@@ -41,14 +36,7 @@ io.on('connection', (socket) => {
 
     const users = getUsers();
 
-    const newPlayerMessage = {
-      user: chatBot,
-      id: v4(),
-      text: `${user?.name} has joined the game.`,
-      time: Date(),
-    };
-
-    socket.broadcast.emit('message', newPlayerMessage);
+    socket.broadcast.emit('message', createMessage(chatBot, `${user?.name} has joined the game.`));
 
     if (users.length >= 2) {
       const activePlayer = users[Math.round(Math.random())].id;
@@ -62,14 +50,7 @@ io.on('connection', (socket) => {
         s.emit('startGame', { ...data, myId: s.id });
       });
 
-      const message = {
-        user: chatBot,
-        id: v4(),
-        text: 'Game starts now!',
-        time: Date(),
-      };
-
-      io.emit('message', message);
+      io.emit('message', createMessage(chatBot, 'Game starts now!'));
     }
   });
 
@@ -91,14 +72,11 @@ io.on('connection', (socket) => {
       ? 'The game is over. You have WON!'
       : `The game is over. ${otherUsername} has won. Good luck next time!`;
 
-    const message = {
-      user: chatBot,
-      id: v4(),
-      text,
-      time: Date(),
-    };
+    socket.emit('message', createMessage(chatBot, text));
+  });
 
-    socket.emit('message', message);
+  socket.on('matchNull', () => {
+    socket.emit('message', createMessage(chatBot, 'The game is a tie!'));
   });
 
   socket.on('resetGame', () => {
@@ -116,14 +94,7 @@ io.on('connection', (socket) => {
 
     io.emit('resetGame', data);
 
-    const message = {
-      user: chatBot,
-      id: v4(),
-      text: 'Game has restarted.',
-      time: Date(),
-    };
-
-    io.emit('message', message);
+    io.emit('message', createMessage(chatBot, 'Game has restarted.'));
   });
 
   socket.on('disconnect', () => {
@@ -131,14 +102,9 @@ io.on('connection', (socket) => {
     removeUser(userId);
     io.emit('quitGame');
 
-    const message = {
-      user: chatBot,
-      id: v4(),
-      text: `${username} has quit the game. Waiting for another player to join.`,
-      time: Date(),
-    };
+    const text = `${username} has quit the game. Waiting for another player to join.`;
 
-    io.emit('message', message);
+    io.emit('message', createMessage(chatBot, text));
   });
 });
 
