@@ -6,6 +6,7 @@ import {
   getUsers, addUser, getUserById, removeUser,
 } from './lib/users';
 import { createMessage } from './lib/messages';
+import type { PlayTokenData, MessageData } from './types';
 
 const app = express();
 const server = createServer(app);
@@ -54,7 +55,7 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('playToken', (data) => {
+  socket.on('playToken', (data: PlayTokenData) => {
     const users = getUsers();
 
     const activePlayer = users.find((u) => u.id !== data.userId)?.id;
@@ -105,6 +106,10 @@ io.on('connection', (socket) => {
     const text = `${username} has quit the game. Waiting for another player to join.`;
 
     io.emit('message', createMessage(chatBot, text));
+  });
+
+  socket.on('message', ({ user, text }: MessageData) => {
+    io.emit('message', createMessage(user, text));
   });
 });
 
