@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { IMessage } from '../../../types';
 import { formatTime } from '../../../lib/chat';
-import styles from './styles.module.scss';
+import { StyledMessage } from './styles';
 
 interface MessageProps {
   message: IMessage;
@@ -23,11 +23,11 @@ const Message = ({ message }: MessageProps) => {
   }, [formattedTime]);
 
   return (
-    <div className={styles.message}>
+    <StyledMessage>
       <p>{message.user}</p>
       <p>{formattedTime}</p>
       <p>{message.text}</p>
-    </div>
+    </StyledMessage>
   );
 };
 
