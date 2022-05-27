@@ -1,6 +1,6 @@
 import { io } from 'socket.io-client';
 import store from '../store';
-import { setUpUser } from '../slices/user';
+import { setUserId } from '../slices/user';
 import {
   playToken, resetGame, startGame, quitGame,
 } from '../slices/game';
@@ -14,7 +14,7 @@ const socketUrl = process.env.NODE_ENV === 'production' ? '' : 'http://localhost
 const socket = io(socketUrl);
 
 socket.emit('setUpPlayer', 'Player', (data: IUser) => {
-  store.dispatch(setUpUser(data));
+  store.dispatch(setUserId(data.id));
 });
 
 socket.on('message', (message: IMessage) => store.dispatch(addMessage(message)));
