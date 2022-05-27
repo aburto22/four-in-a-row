@@ -52,16 +52,20 @@ io.on('connection', (socket) => {
 
     if (waitingRoom.users.length >= 2) {
       const { id: roomId } = createRoom();
+      const { users } = waitingRoom;
 
-      waitingRoom.users.forEach((u) => {
+      users.forEach((u) => {
         addUserToRoom(roomId, u.id);
         removeUserFromWaitingRoom(u.id);
+
+        const opponentName = users.find((ou) => ou.id !== u.id)?.name;
+        const text = `${opponentName} has joined your room.`;
+
         const s = io.sockets.sockets.get(u.id);
         s?.leave(waitingRoom.id);
         s?.join(roomId);
+        s?.emit('message', createMessage(chatBot, text));
       });
-
-      const users = getRoomById(roomId)?.users;
 
       if (!users) {
         console.error('users not found');
