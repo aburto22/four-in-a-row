@@ -19,7 +19,8 @@ socket.on('assignUserId', (id: string) => {
 
 socket.on('message', (message: IMessage) => store.dispatch(addMessage(message)));
 
-socket.on('startGame', ({ activePlayer, myId, players }: IStartGameData) => {
+socket.on('startGame', ({ activePlayer, players }: IStartGameData) => {
+  const myId = store.getState().user.id;
   store.dispatch(startGame({ players, myId, activePlayer }));
 });
 

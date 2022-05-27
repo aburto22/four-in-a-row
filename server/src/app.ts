@@ -2,9 +2,17 @@ import express from 'express';
 import path from 'path';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import { addUser, getUserById, removeUser } from './lib/users';
 import {
-  getUsers, addUser, getUserById, removeUser,
-} from './lib/users';
+  getWaitingRoom,
+  addUserToWaitingRoom,
+  removeUserFromWaitingRoom,
+  removeUserFromRoom,
+  addUserToRoom,
+  createRoom,
+  getRoomById,
+  getRoomByUserId,
+} from './lib/rooms';
 import { createMessage } from './lib/messages';
 import type { PlayTokenData, MessageData } from './types';
 
@@ -24,23 +32,41 @@ app.use(express.static(path.join('..', 'client', 'build')));
 io.on('connection', (socket) => {
   const userId = socket.id;
 
-  const welcomeText = io.sockets.sockets.size < 2
-    ? 'Welcome! Waiting for another user to connect.'
-    : 'Welcome!';
-
-  socket.emit('message', createMessage(chatBot, welcomeText));
+  socket.emit('message', createMessage(chatBot, 'Welcome!'));
 
   socket.on('setUpPlayer', async (name) => {
+    const waitingRoom = getWaitingRoom();
+
     addUser(userId, name);
     const user = getUserById(userId);
 
+    addUserToWaitingRoom(userId);
+    socket.join(waitingRoom.id);
+
     socket.emit('assignUserId', user?.id);
+  });
 
-    const users = getUsers();
+  socket.on('startGame', () => {
+    const waitingRoom = getWaitingRoom();
 
-    socket.broadcast.emit('message', createMessage(chatBot, `${user?.name} has joined the game.`));
+    if (waitingRoom.users.length >= 2) {
+      const { id: roomId } = createRoom();
 
-    if (users.length >= 2) {
+      waitingRoom.users.forEach((u) => {
+        addUserToRoom(roomId, u.id);
+        removeUserFromWaitingRoom(u.id);
+        const s = io.sockets.sockets.get(u.id);
+        s?.leave(waitingRoom.id);
+        s?.join(roomId);
+      });
+
+      const users = getRoomById(roomId)?.users;
+
+      if (!users) {
+        console.error('users not found');
+        return;
+      }
+
       const activePlayer = users[Math.round(Math.random())].id;
 
       const data = {
@@ -48,20 +74,22 @@ io.on('connection', (socket) => {
         players: users,
       };
 
-      io.of('/').sockets.forEach((s) => {
-        s.emit('startGame', { ...data, myId: s.id });
-      });
-
-      io.emit('message', createMessage(chatBot, 'Game starts now!'));
+      io.in(roomId).emit('startGame', data);
+      io.in(roomId).emit('message', createMessage(chatBot, 'Game starts now!'));
     }
   });
 
   socket.on('playToken', ({ index, userId: uId }: PlayTokenData) => {
-    const users = getUsers();
+    const room = getRoomByUserId(userId);
 
-    const activePlayer = users.find((u) => u.id !== uId)?.id;
+    if (!room) {
+      console.error('no room!');
+      return;
+    }
 
-    io.emit('playToken', {
+    const activePlayer = room.users.find((u) => u.id !== uId)?.id;
+
+    io.in(room.id).emit('playToken', {
       index,
       activePlayer,
     });
@@ -70,7 +98,7 @@ io.on('connection', (socket) => {
   socket.on('winner', (winnerId: string) => {
     const otherUsername = getUserById(winnerId)?.name;
 
-    const text = winnerId === socket.id
+    const text = winnerId === userId
       ? 'The game is over. You have WON!'
       : `The game is over. ${otherUsername} has won. Good luck next time!`;
 
@@ -82,35 +110,60 @@ io.on('connection', (socket) => {
   });
 
   socket.on('resetGame', () => {
-    const users = getUsers();
-    if (users.length < 2) {
+    const room = getRoomByUserId(userId);
+
+    if (!room) {
+      console.error('no room!');
       return;
     }
 
-    const activePlayer = users[Math.round(Math.random())].id;
+    if (room.users.length < 2) {
+      return;
+    }
+
+    const activePlayer = room.users[Math.round(Math.random())].id;
 
     const data = {
       activePlayer,
-      players: users,
+      players: room.users,
     };
 
-    io.emit('resetGame', data);
-
-    io.emit('message', createMessage(chatBot, 'Game has restarted.'));
+    io.in(room.id).emit('resetGame', data);
+    io.in(room.id).emit('message', createMessage(chatBot, 'Game has restarted.'));
   });
 
   socket.on('disconnect', () => {
     const username = getUserById(userId)?.name;
+    const room = getRoomByUserId(userId);
     removeUser(userId);
-    io.emit('quitGame');
+
+    if (!room) {
+      console.error('no room!');
+      return;
+    }
+
+    removeUserFromRoom(room.id, userId);
+
+    if (room.type === 'waiting') {
+      return;
+    }
+
+    io.to(room.id).emit('quitGame');
 
     const text = `${username} has quit the game. Waiting for another player to join.`;
 
-    io.emit('message', createMessage(chatBot, text));
+    io.to(room.id).emit('message', createMessage(chatBot, text));
   });
 
   socket.on('message', ({ user, text }: MessageData) => {
-    io.emit('message', createMessage(user, text));
+    const room = getRoomByUserId(userId);
+
+    if (!room) {
+      console.error('no room!');
+      return;
+    }
+
+    io.to(room.id).emit('message', createMessage(user, text));
   });
 });
 
