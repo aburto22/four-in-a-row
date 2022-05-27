@@ -84,6 +84,23 @@ io.on('connection', (socket) => {
     });
   });
 
+  socket.on('winner', (winnerId: string) => {
+    const otherUsername = getUserById(winnerId)?.name;
+
+    const text = winnerId === socket.id
+      ? 'The game is over. You have WON!'
+      : `The game is over. ${otherUsername} has won. Good luck next time!`;
+
+    const message = {
+      user: chatBot,
+      id: v4(),
+      text,
+      time: Date(),
+    };
+
+    socket.emit('message', message);
+  });
+
   socket.on('resetGame', () => {
     const users = getUsers();
     if (users.length < 2) {

@@ -6,20 +6,22 @@ import {
   checkWinner, checkMatchNull, addToken, getActivePlayerMessage, getWinnerMessage, getPlayerToken,
 } from '../lib/game';
 
-interface InitialState {
+interface State {
   board: IBoard,
   message: string,
   isPlayerTurn: boolean,
   players: IUser[],
   myId: string,
+  status: 'waiting' | 'playing' | 'matchNull' | 'winner',
 }
 
-const initialState: InitialState = {
+const initialState: State = {
   board: Array(7).fill(Array(6).fill(null)),
   message: 'waiting for another user before playing',
   isPlayerTurn: false,
   players: [],
   myId: '',
+  status: 'waiting',
 };
 
 const gameSlice = createSlice({
@@ -31,6 +33,7 @@ const gameSlice = createSlice({
       board: initialState.board,
       isPlayerTurn: action.payload === state.myId,
       message: getActivePlayerMessage(state.players, action.payload, state.myId),
+      statys: 'playing',
     }),
     playToken: (state, action: PayloadAction<IPlayTokenData>) => {
       const { index, activePlayer } = action.payload;
@@ -47,6 +50,7 @@ const gameSlice = createSlice({
           board: newBoard,
           message: getWinnerMessage(state.players, activePlayer, state.myId),
           isPlayerTurn: false,
+          status: 'winner',
         };
       }
 
@@ -56,6 +60,7 @@ const gameSlice = createSlice({
           board: newBoard,
           message: 'It is a match null!',
           isPlayerTurn: false,
+          status: 'matchNull',
         };
       }
 
@@ -75,6 +80,7 @@ const gameSlice = createSlice({
         myId,
         message: getActivePlayerMessage(players, activePlayer, myId),
         isPlayerTurn: activePlayer === myId,
+        status: 'playing',
       };
     },
     quitGame: () => initialState,
