@@ -4,6 +4,7 @@ import socket from '../../socket';
 import Board from './Board';
 import Waiting from './Waiting';
 import Chat from './Chat';
+import * as styles from './styles';
 
 const Game = () => {
   const username = useAppSelector((state) => state.user.name);
@@ -19,10 +20,10 @@ const Game = () => {
   }, []);
 
   return (
-    <>
+    <styles.StyledMain>
       {gameStatus === 'waiting' ? <Waiting /> : <Board />}
       <Chat />
-    </>
+    </styles.StyledMain>
   );
 };
 

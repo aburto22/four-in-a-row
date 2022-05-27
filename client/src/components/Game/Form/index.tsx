@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAppSelector } from '../../../hooks/redux';
 import socket from '../../../socket';
+import * as styles from './styles';
 
 const Form = () => {
   const [text, setText] = useState('');
@@ -13,17 +14,14 @@ const Form = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor={text}>
-        Text:
-        <input
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-      </label>
-      <button type="submit">Send</button>
-    </form>
+    <styles.Form onSubmit={handleSubmit}>
+      <styles.Input
+        type="text"
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+      />
+      <styles.Button type="submit">Send</styles.Button>
+    </styles.Form>
   );
 };
 

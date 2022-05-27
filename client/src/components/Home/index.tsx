@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch } from '../../hooks/redux';
 import { setUserName } from '../../slices/user';
+import * as styles from './styles';
 
 const Home = () => {
   const [username, setUsername] = useState('');
@@ -17,19 +18,21 @@ const Home = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="username">
-        Username:
-        <input
-          type="text"
-          name="username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-      </label>
-      <button type="submit">Start!</button>
-    </form>
+    <styles.StyledMain>
+      <styles.StyledForm onSubmit={handleSubmit}>
+        <styles.StyledLabel htmlFor="username">
+          Username:
+          <styles.StyledInput
+            type="text"
+            name="username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </styles.StyledLabel>
+        <styles.StyledButton type="submit">Start!</styles.StyledButton>
+      </styles.StyledForm>
+    </styles.StyledMain>
   );
 };
 

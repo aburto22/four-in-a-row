@@ -148,11 +148,11 @@ io.on('connection', (socket) => {
 
     const otherUsers = getRoomById(room.id)?.users;
 
-    removeRoom(room.id);
-
     if (room.type === 'waiting') {
       return;
     }
+
+    removeRoom(room.id);
 
     otherUsers?.forEach((u) => {
       const s = io.sockets.sockets.get(u.id);

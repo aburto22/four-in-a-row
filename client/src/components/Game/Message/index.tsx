@@ -1,33 +1,26 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { IMessage } from '../../../types';
 import { formatTime } from '../../../lib/chat';
-import { StyledMessage } from './styles';
+import * as styles from './styles';
 
 interface MessageProps {
   message: IMessage;
+  currentTime: Date;
 }
 
-const Message = ({ message }: MessageProps) => {
-  const [formattedTime, setFormattedTime] = useState(formatTime(message.time));
+const Message = ({ message, currentTime }: MessageProps) => {
+  let formattedTime = formatTime(message.time, currentTime);
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      const newTime = formatTime(message.time);
-
-      if (newTime !== formattedTime) {
-        setFormattedTime(newTime);
-      }
-    }, 60 * 1000);
-
-    return () => { clearInterval(timer); };
-  }, [formattedTime]);
+    formattedTime = formatTime(message.time, new Date());
+  }, []);
 
   return (
-    <StyledMessage>
-      <p>{message.user}</p>
-      <p>{formattedTime}</p>
-      <p>{message.text}</p>
-    </StyledMessage>
+    <styles.Div>
+      <styles.PUser>{message.user}</styles.PUser>
+      <styles.PTime>{formattedTime}</styles.PTime>
+      <styles.PText>{message.text}</styles.PText>
+    </styles.Div>
   );
 };
 

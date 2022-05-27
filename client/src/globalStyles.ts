@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import { colors } from './cssVariables';
 
 export default createGlobalStyle`
   body {
@@ -8,6 +9,8 @@ export default createGlobalStyle`
       sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    color: ${colors.blueDark};
+    background: radial-gradient(circle at 50% 50%, ${colors.yellowOrange}, ${colors.yellowOrangeDarker});
   }
 
   code {
