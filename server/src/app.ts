@@ -24,7 +24,11 @@ const chatBot = "Chat Bot";
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:3000", "four-in-a-row-sockets.vercel.app"],
+    origin: [
+      "http://localhost:3000",
+      "https://four-in-a-row-sockets.vercel.app",
+    ],
+    methods: ["GET", "POST"],
   },
 });
 

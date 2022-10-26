@@ -5,8 +5,13 @@ import { playToken, resetGame, startGame, quitGame } from "@slices/game";
 import { addMessage } from "@slices/chat";
 import type { IPlayTokenData, IStartGameData, IMessage } from "@types";
 
-const socketUrl =
-  process.env.NODE_ENV === "production" ? "" : "http://localhost:8080";
+const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
+
+console.log(socketUrl);
+
+if (!socketUrl) {
+  throw new Error("socket url missing");
+}
 
 const socket = io(socketUrl);
 
