@@ -1,8 +1,8 @@
-import express from 'express';
-import path from 'path';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import { addUser, getUserById, removeUser } from './lib/users';
+import express from "express";
+import path from "path";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import { addUser, getUserById, removeUser } from "./lib/users";
 import {
   getWaitingRoom,
   addUserToWaitingRoom,
@@ -13,29 +13,29 @@ import {
   getRoomById,
   getRoomByUserId,
   removeRoom,
-} from './lib/rooms';
-import { createMessage } from './lib/messages';
-import type { PlayTokenData, MessageData } from './types';
+} from "./lib/rooms";
+import { createMessage } from "./lib/messages";
+import type { PlayTokenData, MessageData } from "./types";
 
 const app = express();
 const server = createServer(app);
 
-const chatBot = 'Chat Bot';
+const chatBot = "Chat Bot";
 
 const io = new Server(server, {
   cors: {
-    origin: 'http://localhost:3000',
+    origin: ["http://localhost:3000", "four-in-a-row-sockets.vercel.app"],
   },
 });
 
-app.use(express.static(path.join('..', 'client', 'build')));
+app.use(express.static(path.join("..", "client", "build")));
 
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
   const userId = socket.id;
 
-  socket.emit('message', createMessage(chatBot, 'Welcome!'));
+  socket.emit("message", createMessage(chatBot, "Welcome!"));
 
-  socket.on('setUpPlayer', async (name) => {
+  socket.on("setUpPlayer", async (name) => {
     const waitingRoom = getWaitingRoom();
 
     addUser(userId, name);
@@ -44,10 +44,10 @@ io.on('connection', (socket) => {
     addUserToWaitingRoom(userId);
     socket.join(waitingRoom.id);
 
-    socket.emit('assignUserId', user?.id);
+    socket.emit("assignUserId", user?.id);
   });
 
-  socket.on('startGame', () => {
+  socket.on("startGame", () => {
     const waitingRoom = getWaitingRoom();
 
     if (waitingRoom.users.length >= 2) {
@@ -64,11 +64,11 @@ io.on('connection', (socket) => {
         const s = io.sockets.sockets.get(u.id);
         s?.leave(waitingRoom.id);
         s?.join(roomId);
-        s?.emit('message', createMessage(chatBot, text));
+        s?.emit("message", createMessage(chatBot, text));
       });
 
       if (!users) {
-        console.error('users not found');
+        console.error("users not found");
         return;
       }
 
@@ -79,46 +79,47 @@ io.on('connection', (socket) => {
         players: users,
       };
 
-      io.in(roomId).emit('startGame', data);
-      io.in(roomId).emit('message', createMessage(chatBot, 'Game starts now!'));
+      io.in(roomId).emit("startGame", data);
+      io.in(roomId).emit("message", createMessage(chatBot, "Game starts now!"));
     }
   });
 
-  socket.on('playToken', ({ index, userId: uId }: PlayTokenData) => {
+  socket.on("playToken", ({ index, userId: uId }: PlayTokenData) => {
     const room = getRoomByUserId(userId);
 
     if (!room) {
-      console.error('no room!');
+      console.error("no room!");
       return;
     }
 
     const activePlayer = room.users.find((u) => u.id !== uId)?.id;
 
-    io.in(room.id).emit('playToken', {
+    io.in(room.id).emit("playToken", {
       index,
       activePlayer,
     });
   });
 
-  socket.on('winner', (winnerId: string) => {
+  socket.on("winner", (winnerId: string) => {
     const otherUsername = getUserById(winnerId)?.name;
 
-    const text = winnerId === userId
-      ? 'The game is over. You have WON!'
-      : `The game is over. ${otherUsername} has won. Good luck next time!`;
+    const text =
+      winnerId === userId
+        ? "The game is over. You have WON!"
+        : `The game is over. ${otherUsername} has won. Good luck next time!`;
 
-    socket.emit('message', createMessage(chatBot, text));
+    socket.emit("message", createMessage(chatBot, text));
   });
 
-  socket.on('matchNull', () => {
-    socket.emit('message', createMessage(chatBot, 'The game is a tie!'));
+  socket.on("matchNull", () => {
+    socket.emit("message", createMessage(chatBot, "The game is a tie!"));
   });
 
-  socket.on('resetGame', () => {
+  socket.on("resetGame", () => {
     const room = getRoomByUserId(userId);
 
     if (!room) {
-      console.error('no room!');
+      console.error("no room!");
       return;
     }
 
@@ -133,18 +134,21 @@ io.on('connection', (socket) => {
       players: room.users,
     };
 
-    io.in(room.id).emit('resetGame', data);
-    io.in(room.id).emit('message', createMessage(chatBot, 'Game has restarted.'));
+    io.in(room.id).emit("resetGame", data);
+    io.in(room.id).emit(
+      "message",
+      createMessage(chatBot, "Game has restarted.")
+    );
   });
 
-  socket.on('disconnect', () => {
+  socket.on("disconnect", () => {
     const { id: waitingRoomId } = getWaitingRoom();
     const username = getUserById(userId)?.name;
     const room = getRoomByUserId(userId);
     removeUser(userId);
 
     if (!room) {
-      console.error('no room!');
+      console.error("no room!");
       return;
     }
 
@@ -152,7 +156,7 @@ io.on('connection', (socket) => {
 
     const otherUsers = getRoomById(room.id)?.users;
 
-    if (room.type === 'waiting') {
+    if (room.type === "waiting") {
       return;
     }
 
@@ -160,23 +164,23 @@ io.on('connection', (socket) => {
 
     otherUsers?.forEach((u) => {
       const s = io.sockets.sockets.get(u.id);
-      s?.emit('quitGame');
+      s?.emit("quitGame");
       const text = `${username} has quit the game. Waiting for another player to join.`;
-      s?.emit('message', createMessage(chatBot, text));
+      s?.emit("message", createMessage(chatBot, text));
       s?.leave(room.id);
       s?.join(waitingRoomId);
     });
   });
 
-  socket.on('message', ({ user, text }: MessageData) => {
+  socket.on("message", ({ user, text }: MessageData) => {
     const room = getRoomByUserId(userId);
 
     if (!room) {
-      console.error('no room!');
+      console.error("no room!");
       return;
     }
 
-    io.to(room.id).emit('message', createMessage(user, text));
+    io.to(room.id).emit("message", createMessage(user, text));
   });
 });
 
