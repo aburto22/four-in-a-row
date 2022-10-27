@@ -67,7 +67,6 @@ const Game = () => {
     });
 
     return () => {
-      console.log("disconnecting", username);
       socketServer.disconnect();
     };
   }, [username, dispatch]);
