@@ -13,6 +13,7 @@ import {
   getRoomById,
   getRoomByUserId,
   removeRoom,
+  getRooms,
 } from "./lib/rooms";
 import { createMessage } from "./lib/messages";
 import type { PlayTokenData, MessageData } from "./types";
@@ -91,6 +92,8 @@ io.on("connection", (socket) => {
   socket.on("playToken", ({ index, userId: uId }: PlayTokenData) => {
     const room = getRoomByUserId(userId);
 
+    console.log(getRooms());
+
     if (!room) {
       console.error("no room!");
       return;
@@ -150,6 +153,8 @@ io.on("connection", (socket) => {
     const username = getUserById(userId)?.name;
     const room = getRoomByUserId(userId);
     removeUser(userId);
+
+    console.log(`disconnecting user ${username}`);
 
     if (!room) {
       console.error("no room!");

@@ -7,8 +7,6 @@ import type { IPlayTokenData, IStartGameData, IMessage } from "@types";
 
 const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
 
-console.log(socketUrl);
-
 if (!socketUrl) {
   throw new Error("socket url missing");
 }

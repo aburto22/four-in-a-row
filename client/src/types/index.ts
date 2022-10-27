@@ -17,7 +17,6 @@ export interface IPlayTokenData {
 export interface IStartGameData {
   activePlayer: string;
   players: IUser[];
-  myId: string;
 }
 
 export interface IMessage {

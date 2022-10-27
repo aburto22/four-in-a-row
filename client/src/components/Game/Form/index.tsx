@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { useAppSelector } from "@hooks/redux";
-import socket from "@socket";
+import { useSocketContext } from "@context/SocketContext";
 import * as styles from "./styles";
 
 const Form = () => {
   const [text, setText] = useState("");
   const user = useAppSelector((state) => state.user?.name);
+  const socket = useSocketContext();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

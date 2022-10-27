@@ -1,10 +1,10 @@
 /* eslint-disable react/no-array-index-key */
 import React from "react";
-import socket from "@socket";
 import { useAppSelector } from "@hooks/redux";
 import Token from "@components/Game/Token";
 import styles from "./styles.module.scss";
 import { IColumn } from "@types";
+import { useSocketContext } from "@context/SocketContext";
 
 interface ColumnProps {
   column: IColumn;
@@ -14,6 +14,7 @@ interface ColumnProps {
 const Column = ({ column, index }: ColumnProps) => {
   const { isPlayerTurn } = useAppSelector((state) => state.game);
   const user = useAppSelector((state) => state.user);
+  const socket = useSocketContext();
 
   const handleClick = () => {
     socket.emit("playToken", {

@@ -1,13 +1,14 @@
 /* eslint-disable react/no-array-index-key */
 import React from "react";
 import { useAppSelector } from "@hooks/redux";
-import socket from "@socket";
 import Column from "@components/Game/Column";
 import styles from "./styles.module.scss";
+import { useSocketContext } from "@context/SocketContext";
 
 const Board = () => {
   const { board, message, status } = useAppSelector((state) => state.game);
   const user = useAppSelector((state) => state.user);
+  const socket = useSocketContext();
 
   const Columns = board.map((c, i) => <Column key={i} column={c} index={i} />);
 

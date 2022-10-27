@@ -82,13 +82,19 @@ const gameSlice = createSlice({
         ),
       };
     },
+    setUserIdInGame: (state, action: PayloadAction<string>) => {
+      return {
+        ...state,
+        myId: action.payload,
+      };
+    },
     startGame: (state, action: PayloadAction<IStartGameData>) => {
-      const { players, myId, activePlayer } = action.payload;
+      const { players, activePlayer } = action.payload;
+      const { myId } = state;
 
       return {
         ...state,
         players,
-        myId,
         message: getActivePlayerMessage(players, activePlayer, myId),
         isPlayerTurn: activePlayer === myId,
         status: "playing",
@@ -98,6 +104,7 @@ const gameSlice = createSlice({
   },
 });
 
-export const { playToken, resetGame, startGame, quitGame } = gameSlice.actions;
+export const { playToken, resetGame, startGame, quitGame, setUserIdInGame } =
+  gameSlice.actions;
 
 export default gameSlice.reducer;
