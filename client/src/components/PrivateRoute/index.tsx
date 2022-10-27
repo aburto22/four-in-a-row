@@ -12,12 +12,11 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const { push } = useRouter();
 
   useEffect(() => {
-    console.log("running");
     if (!username) {
       push("/");
       return;
     }
-    setLoading(true);
+    setLoading(false);
   }, [username, push]);
 
   if (loading) {
