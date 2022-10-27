@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { addMessage } from "@slices/chat";
 import {
@@ -25,6 +25,7 @@ if (!socketUrl) {
 const Game = () => {
   const username = useAppSelector((state) => state.user.name);
   const gameStatus = useAppSelector((state) => state.game.status);
+  const winnerId = useAppSelector((state) => state.game.winnerId);
   const dispatch = useAppDispatch();
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -50,18 +51,6 @@ const Game = () => {
 
     socketServer.on("playToken", ({ index, activePlayer }: IPlayTokenData) => {
       dispatch(playToken({ index, activePlayer }));
-      // const gameState = store.getState().game;
-
-      // if (gameState.status === "winner") {
-      //   const winnerId = gameState.players.find(
-      //     (p) => p.id !== activePlayer
-      //   )?.id;
-      //   socketServer.emit("winner", winnerId);
-      // }
-
-      // if (gameState.status === "matchNull") {
-      //   socketServer.emit("matchNull");
-      // }
     });
 
     socketServer.on("resetGame", ({ activePlayer }: IStartGameData) => {
@@ -73,7 +62,6 @@ const Game = () => {
     });
 
     socketServer.on("connect", () => {
-      console.log("connecting", username);
       socketServer.emit("setUpPlayer", username);
       socketServer.emit("startGame");
     });
@@ -83,6 +71,20 @@ const Game = () => {
       socketServer.disconnect();
     };
   }, [username, dispatch]);
+
+  useEffect(() => {
+    if (!socket) {
+      return;
+    }
+
+    if (gameStatus === "winner") {
+      socket.emit("winner", winnerId);
+    }
+
+    if (gameStatus === "matchNull") {
+      socket.emit("matchNull");
+    }
+  }, [socket, winnerId, gameStatus]);
 
   if (!socket) {
     return null;

@@ -8,6 +8,11 @@ export interface IUser {
   name: string;
 }
 
+export interface IPlayer {
+  name: string;
+  id: string;
+}
+
 export interface IPlayTokenData {
   activePlayer: string;
   index: number;
@@ -15,7 +20,7 @@ export interface IPlayTokenData {
 
 export interface IStartGameData {
   activePlayer: string;
-  players: IUser[];
+  players: IPlayer[];
 }
 
 export interface IMessage {

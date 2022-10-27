@@ -1,4 +1,4 @@
-import { IBoard, IUser, IToken } from "@types";
+import { IBoard, IUser, IToken, IPlayer } from "@types";
 
 const checkHorizontalWinner = (board: IBoard, token: IToken): boolean => {
   const columnHeight = board[0].length;
@@ -125,7 +125,7 @@ export const addToken = (
 };
 
 export const getActivePlayerMessage = (
-  players: IUser[],
+  players: IPlayer[],
   activePlayer: string,
   myId: string
 ): string => {
@@ -137,19 +137,23 @@ export const getActivePlayerMessage = (
 };
 
 export const getWinnerMessage = (
-  players: IUser[],
-  activePlayer: string,
+  players: IPlayer[],
+  previousPlayerId: string,
   myId: string
 ): string => {
-  if (activePlayer !== myId) {
+  if (previousPlayerId === myId) {
     return "You have won this match!";
   }
-  const activePlayerName = players.find((p) => p.id !== activePlayer)?.name;
-  return `${activePlayerName} has won the game`;
+
+  const previousPlayerName = players.find(
+    (p) => p.id === previousPlayerId
+  )?.name;
+
+  return `${previousPlayerName} has won the game`;
 };
 
 export const getPlayerToken = (
-  players: IUser[],
+  players: IPlayer[],
   activePlayer: string
 ): IToken => {
   const playerIndex = players.findIndex((p) => p.id !== activePlayer) + 1;

@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { IBoard, IUser, IPlayTokenData, IStartGameData } from "@types";
+import type { IBoard, IPlayer, IPlayTokenData, IStartGameData } from "@types";
 import {
   checkWinner,
   checkMatchNull,
@@ -13,9 +13,10 @@ interface State {
   board: IBoard;
   message: string;
   isPlayerTurn: boolean;
-  players: IUser[];
+  players: IPlayer[];
   myId: string;
   status: "waiting" | "playing" | "matchNull" | "winner";
+  winnerId: string;
 }
 
 const initialState: State = {
@@ -25,6 +26,7 @@ const initialState: State = {
   players: [],
   myId: "",
   status: "waiting",
+  winnerId: "",
 };
 
 const gameSlice = createSlice({
@@ -41,23 +43,32 @@ const gameSlice = createSlice({
         state.myId
       ),
       status: "playing",
+      winenrId: "",
     }),
     playToken: (state, action: PayloadAction<IPlayTokenData>) => {
       const { index, activePlayer } = action.payload;
-      const playerToken = getPlayerToken(state.players, activePlayer);
-      const newBoard = addToken(state.board, index, playerToken);
+      const { players, board, myId } = state;
+      const playerToken = getPlayerToken(players, activePlayer);
+      const newBoard = addToken(board, index, playerToken);
 
       if (!newBoard) {
         return state;
       }
 
       if (checkWinner(newBoard, playerToken)) {
+        const previousPlayerId = players.find((p) => p.id !== activePlayer)?.id;
+
+        if (!previousPlayerId) {
+          throw new Error("Weird thing happened");
+        }
+
         return {
           ...state,
           board: newBoard,
-          message: getWinnerMessage(state.players, activePlayer, state.myId),
+          message: getWinnerMessage(players, previousPlayerId, myId),
           isPlayerTurn: false,
           status: "winner",
+          winnerId: previousPlayerId,
         };
       }
 
@@ -74,12 +85,8 @@ const gameSlice = createSlice({
       return {
         ...state,
         board: newBoard,
-        isPlayerTurn: activePlayer === state.myId,
-        message: getActivePlayerMessage(
-          state.players,
-          activePlayer,
-          state.myId
-        ),
+        isPlayerTurn: activePlayer === myId,
+        message: getActivePlayerMessage(players, activePlayer, myId),
       };
     },
     setUserId: (state, action: PayloadAction<string>) => {
