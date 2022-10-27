@@ -12,14 +12,14 @@ interface ColumnProps {
 }
 
 const Column = ({ column, index }: ColumnProps) => {
-  const { isPlayerTurn } = useAppSelector((state) => state.game);
-  const user = useAppSelector((state) => state.user);
+  const isPlayerTurn = useAppSelector((state) => state.game.isPlayerTurn);
+  const userId = useAppSelector((state) => state.game.myId);
   const socket = useSocketContext();
 
   const handleClick = () => {
     socket.emit("playToken", {
       index,
-      userId: user?.id,
+      userId,
     });
   };
 

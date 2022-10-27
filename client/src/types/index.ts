@@ -6,7 +6,6 @@ export type IBoard = Array<IColumn>;
 
 export interface IUser {
   name: string;
-  id: string;
 }
 
 export interface IPlayTokenData {

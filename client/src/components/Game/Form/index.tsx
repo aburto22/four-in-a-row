@@ -5,12 +5,12 @@ import * as styles from "./styles";
 
 const Form = () => {
   const [text, setText] = useState("");
-  const user = useAppSelector((state) => state.user?.name);
+  const username = useAppSelector((state) => state.user.name);
   const socket = useSocketContext();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    socket.emit("message", { user, text });
+    socket.emit("message", { user: username, text });
     setText("");
   };
 

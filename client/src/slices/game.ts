@@ -82,7 +82,7 @@ const gameSlice = createSlice({
         ),
       };
     },
-    setUserIdInGame: (state, action: PayloadAction<string>) => {
+    setUserId: (state, action: PayloadAction<string>) => {
       return {
         ...state,
         myId: action.payload,
@@ -104,7 +104,7 @@ const gameSlice = createSlice({
   },
 });
 
-export const { playToken, resetGame, startGame, quitGame, setUserIdInGame } =
+export const { playToken, resetGame, startGame, quitGame, setUserId } =
   gameSlice.actions;
 
 export default gameSlice.reducer;

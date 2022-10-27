@@ -1,13 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { setUserId } from "@slices/user";
 import { addMessage } from "@slices/chat";
 import {
   startGame,
   playToken,
   resetGame,
   quitGame,
-  setUserIdInGame,
+  setUserId,
 } from "@slices/game";
 import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import type { IMessage, IStartGameData, IPlayTokenData } from "@types";
@@ -27,7 +26,6 @@ const Game = () => {
   const username = useAppSelector((state) => state.user.name);
   const gameStatus = useAppSelector((state) => state.game.status);
   const dispatch = useAppDispatch();
-  const userId = useAppSelector((state) => state.game.myId);
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
@@ -37,7 +35,6 @@ const Game = () => {
 
     socketServer.on("assignUserId", (id: string) => {
       dispatch(setUserId(id));
-      dispatch(setUserIdInGame(id));
     });
 
     socketServer.on("message", (message: IMessage) =>
