@@ -4,11 +4,11 @@ import { addMessage } from "@slices/chat";
 import { startGame, quitGame, setUserId, updateGame } from "@slices/game";
 import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import type { IMessage, IStartGameData, IGame } from "@types";
+import SocketContext from "@context/SocketContext";
 import Board from "./Board";
 import Waiting from "./Waiting";
 import Chat from "./Chat";
 import * as styles from "./styles";
-import SocketContext from "@context/SocketContext";
 
 const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
 
@@ -66,10 +66,10 @@ const Game = () => {
 
   return (
     <SocketContext.Provider value={socket}>
-      <styles.StyledMain>
+      <styles.Main>
         {gameStatus === "waiting" ? <Waiting /> : <Board />}
         <Chat />
-      </styles.StyledMain>
+      </styles.Main>
     </SocketContext.Provider>
   );
 };

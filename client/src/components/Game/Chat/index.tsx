@@ -29,13 +29,15 @@ const Chat = () => {
 
   return (
     <styles.Section>
-      <styles.Div ref={messagesRef}>
-        {messages.length > 0 &&
-          messages.map((m) => (
-            <Message key={m.id} message={m} currentTime={currentTime} />
-          ))}
-      </styles.Div>
-      <Form />
+      <styles.Chat>
+        <styles.Messages ref={messagesRef}>
+          {messages.length > 0 &&
+            messages.map((m) => (
+              <Message key={m.id} message={m} currentTime={currentTime} />
+            ))}
+        </styles.Messages>
+        <Form />
+      </styles.Chat>
     </styles.Section>
   );
 };

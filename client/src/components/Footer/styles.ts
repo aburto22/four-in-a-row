@@ -1,3 +1,4 @@
+import { colors } from "@styles/cssVariables";
 import styled from "styled-components";
 
 export const Footer = styled.footer`
@@ -8,5 +9,7 @@ export const Footer = styled.footer`
 `;
 
 export const Text = styled.p`
-  font-size: 0.9rem;
+  font-size: 0.8rem;
+  color: ${colors.boardBorder};
+  font-weight: bold;
 `;

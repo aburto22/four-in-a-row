@@ -1,8 +1,7 @@
 import { colors } from "@styles/cssVariables";
 import styled, { css } from "styled-components";
 
-export const Container = styled.div`
-  padding: 2rem 0;
+export const Container = styled.section`
   display: flex;
   flex-direction: column;
   justify-content: center;

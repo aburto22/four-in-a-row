@@ -18,6 +18,6 @@ export const Token = styled.div<TokenProps>`
     if (colour === "black") {
       return colors.tokenBlack;
     }
-    return "white";
+    return colors.snow;
   }};
 `;
