@@ -1,15 +1,17 @@
+import Footer from "@components/Footer";
 import Header from "@components/Header";
-import { StyledDiv } from "./style";
+import * as styles from "./style";
 
 type LayoutProps = {
   children: React.ReactNode;
 };
 
 const Layout = ({ children }: LayoutProps) => (
-  <StyledDiv>
+  <styles.App>
     <Header />
     {children}
-  </StyledDiv>
+    <Footer />
+  </styles.App>
 );
 
 export default Layout;

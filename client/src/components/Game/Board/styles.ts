@@ -2,7 +2,7 @@ import { colors } from "@styles/cssVariables";
 import styled, { css } from "styled-components";
 
 export const Container = styled.div`
-  padding: 2rem;
+  padding: 2rem 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
