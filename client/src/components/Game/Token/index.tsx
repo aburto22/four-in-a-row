@@ -8,8 +8,8 @@ interface TokenProps {
 
 const Token = ({ token }: TokenProps) => (
   <div
-    className={`${styles.token} ${token === "P1" && styles.tokenP1} ${
-      token === "P2" && styles.tokenP2
+    className={`${styles.token} ${token === "red" && styles.red} ${
+      token === "blue" && styles.blue
     }`}
   />
 );

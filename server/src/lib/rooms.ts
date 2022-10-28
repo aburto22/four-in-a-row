@@ -1,14 +1,15 @@
-import { v4 } from 'uuid';
-import { getUserById } from './users';
-import type { IRoom } from '../types';
+import { v4 } from "uuid";
+import { getUserById } from "@lib/users";
+import type { IGameRoom, IRoom, IUser, IGame } from "@types";
+import { createGame } from "./game";
 
 let waitingRoom: IRoom = {
   id: v4(),
-  type: 'waiting',
+  type: "waiting",
   users: [],
 };
 
-let rooms: IRoom[] = [waitingRoom];
+let gameRooms: IGameRoom[] = [];
 
 export const getWaitingRoom = () => waitingRoom;
 
@@ -23,8 +24,6 @@ export const addUserToWaitingRoom = (userId: string) => {
     ...waitingRoom,
     users: [...waitingRoom.users, user],
   };
-
-  rooms = rooms.map((r) => (r.type === 'waiting' ? waitingRoom : r));
 };
 
 export const removeUserFromWaitingRoom = (userId: string) => {
@@ -32,27 +31,31 @@ export const removeUserFromWaitingRoom = (userId: string) => {
     ...waitingRoom,
     users: waitingRoom.users.filter((u) => u.id !== userId),
   };
-
-  rooms = rooms.map((r) => (r.type === 'waiting' ? waitingRoom : r));
 };
 
-export const getRooms = () => rooms;
+export const getGameRooms = () => gameRooms;
 
-export const getRoomById = (roomId: string) => rooms.find((r) => r.id === roomId);
+export const getRoomById = (roomId: string): IRoom | undefined => {
+  if (waitingRoom.id === roomId) {
+    return waitingRoom;
+  }
+  return gameRooms.find((r) => r.id === roomId);
+};
 
-export const createRoom = () => {
-  const newRoom: IRoom = {
+export const createRoom = (users: [IUser, IUser]) => {
+  const newRoom: IGameRoom = {
     id: v4(),
-    type: 'game',
-    users: [],
+    type: "game",
+    users: users,
+    game: createGame(...users),
   };
 
-  rooms = [...rooms, newRoom];
+  gameRooms = [...gameRooms, newRoom];
 
   return newRoom;
 };
 
-export const removeRoom = (roomId: string) => {
+export const removeGameRoom = (roomId: string) => {
   const room = getRoomById(roomId);
 
   if (!room) {
@@ -61,39 +64,48 @@ export const removeRoom = (roomId: string) => {
 
   room.users.forEach((u) => addUserToWaitingRoom(u.id));
 
-  rooms = rooms.filter((r) => r.id !== roomId);
-};
-
-export const addUserToRoom = (roomId: string, userId: string) => {
-  const room = getRooms().find((r) => r.id === roomId);
-  const user = getUserById(userId);
-
-  if (!room || !user) {
-    return;
-  }
-
-  const updatedRoom: IRoom = {
-    ...room,
-    users: [...room.users, user],
-  };
-
-  rooms = rooms.map((r) => (r.id === updatedRoom.id ? updatedRoom : r));
+  gameRooms = gameRooms.filter((r) => r.id !== roomId);
 };
 
 export const removeUserFromRoom = (roomId: string, userId: string) => {
-  const room = getRooms().find((r) => r.id === roomId);
+  if (waitingRoom.id === roomId) {
+    waitingRoom = {
+      ...waitingRoom,
+      users: waitingRoom.users.filter((u) => u.id !== userId),
+    };
+    return;
+  }
+  const gameRoom = getGameRooms().find((r) => r.id === roomId);
 
-  if (!room) {
+  if (!gameRoom) {
     return;
   }
 
-  const updatedRoom: IRoom = {
-    ...room,
-    users: room.users.filter((u) => u.id !== userId),
-  };
+  const otherUsers = gameRoom.users.filter((u) => u.id !== userId);
 
-  rooms = rooms.map((r) => (r.id === updatedRoom.id ? updatedRoom : r));
+  gameRooms = gameRooms.filter((r) => r.id !== gameRoom.id);
+
+  otherUsers.forEach((u) => addUserToWaitingRoom(u.id));
 };
 
-export const getRoomByUserId = (userId: string) => rooms
-  .find((r) => r.users.find((u) => u.id === userId));
+export const getRoomByUserId = (userId: string): IRoom | undefined => {
+  if (waitingRoom.users.findIndex((u) => u.id === userId) >= 0) {
+    return waitingRoom;
+  }
+  return gameRooms.find((r) => r.users.find((u) => u.id === userId));
+};
+
+export const getGameRoomByUserId = (userId: string): IGameRoom | undefined =>
+  gameRooms.find((r) => r.users.find((u) => u.id === userId));
+
+export const updateGameRoom = (roomId: string, updatedGame: IGame): void => {
+  gameRooms = gameRooms.map((room) => {
+    if (room.id !== roomId) {
+      return room;
+    }
+    return {
+      ...room,
+      game: updatedGame,
+    };
+  });
+};

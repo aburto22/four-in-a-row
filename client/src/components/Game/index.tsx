@@ -1,15 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { addMessage } from "@slices/chat";
-import {
-  startGame,
-  playToken,
-  resetGame,
-  quitGame,
-  setUserId,
-} from "@slices/game";
+import { startGame, quitGame, setUserId, updateGame } from "@slices/game";
 import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import type { IMessage, IStartGameData, IPlayTokenData } from "@types";
+import type { IMessage, IStartGameData, IGame } from "@types";
 import Board from "./Board";
 import Waiting from "./Waiting";
 import Chat from "./Chat";
@@ -49,13 +43,17 @@ const Game = () => {
       }
     );
 
-    socketServer.on("playToken", ({ index, activePlayer }: IPlayTokenData) => {
-      dispatch(playToken({ index, activePlayer }));
+    socketServer.on("play", (game: IGame) => {
+      dispatch(updateGame(game));
     });
 
-    socketServer.on("resetGame", ({ activePlayer }: IStartGameData) => {
-      dispatch(resetGame(activePlayer));
-    });
+    // socketServer.on("playToken", ({ index, activePlayer }: IPlayTokenData) => {
+    //   dispatch(playToken({ index, activePlayer }));
+    // });
+
+    // socketServer.on("resetGame", ({ activePlayer }: IStartGameData) => {
+    //   dispatch(resetGame(activePlayer));
+    // });
 
     socketServer.on("quitGame", () => {
       dispatch(quitGame());

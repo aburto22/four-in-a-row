@@ -9,7 +9,7 @@ interface MessageProps {
 }
 
 const Message = ({ message, currentTime }: MessageProps) => {
-  let formmatedTimeRef = useRef(formatTime(message.time, currentTime));
+  const formmatedTimeRef = useRef(formatTime(message.time, currentTime));
 
   useEffect(() => {
     formmatedTimeRef.current = formatTime(message.time, new Date());

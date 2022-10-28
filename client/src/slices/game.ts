@@ -1,5 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { IBoard, IPlayer, IPlayTokenData, IStartGameData } from "@types";
+import type {
+  IBoard,
+  IPlayer,
+  IPlayTokenData,
+  IStartGameData,
+  IGame,
+} from "@types";
 import {
   checkWinner,
   checkMatchNull,
@@ -45,6 +51,30 @@ const gameSlice = createSlice({
       status: "playing",
       winenrId: "",
     }),
+    updateGame: (state, action: PayloadAction<IGame>) => {
+      const { board, activePlayerId, status, winnerName, players } =
+        action.payload;
+
+      let message = getActivePlayerMessage(players, activePlayerId, state.myId);
+
+      if (status === "winner") {
+        message =
+          activePlayerId === state.myId
+            ? "You have won!"
+            : `You have lost, ${winnerName} has won.`;
+      }
+      if (status === "matchNull") {
+        message = "It is a tie!";
+      }
+
+      return {
+        ...state,
+        board,
+        isPlayerTurn: status === "playing" && state.myId === activePlayerId,
+        status,
+        message,
+      };
+    },
     playToken: (state, action: PayloadAction<IPlayTokenData>) => {
       const { index, activePlayer } = action.payload;
       const { players, board, myId } = state;
@@ -111,7 +141,13 @@ const gameSlice = createSlice({
   },
 });
 
-export const { playToken, resetGame, startGame, quitGame, setUserId } =
-  gameSlice.actions;
+export const {
+  playToken,
+  resetGame,
+  startGame,
+  quitGame,
+  setUserId,
+  updateGame,
+} = gameSlice.actions;
 
 export default gameSlice.reducer;

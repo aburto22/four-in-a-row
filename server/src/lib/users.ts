@@ -1,4 +1,4 @@
-import type { IUser } from '../types';
+import type { IUser } from "@types";
 
 let users: IUser[] = [];
 

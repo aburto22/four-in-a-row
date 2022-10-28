@@ -1,9 +1,45 @@
-import { IBoard, IToken, IPlayer } from "@types";
+import { IUser, IPlayer, IGame, IBoard, IToken } from "@types";
 
-export const checkHorizontalWinner = (
-  board: IBoard,
-  token: IToken
-): boolean => {
+const getActivePlayer = (game: IGame): IPlayer => {
+  const activePlayer = game.players.find((p) => p.id === game.activePlayerId);
+
+  if (!activePlayer) {
+    throw new Error("Player not found");
+  }
+
+  return activePlayer;
+};
+
+const createBoard = () => Array(7).fill(Array(6).fill(null));
+
+export const createGame = (player1: IUser, player2: IUser): IGame => {
+  const startingPlayerIndex = Math.floor(Math.random() * 2);
+  const startingPlayer = startingPlayerIndex === 0 ? player1 : player2;
+  const secondPlayer = startingPlayerIndex === 0 ? player2 : player1;
+
+  const players = [
+    {
+      ...startingPlayer,
+      token: "red",
+      nextPlayerId: secondPlayer.id,
+    },
+    {
+      ...secondPlayer,
+      token: "blue",
+      nextPlayerId: startingPlayer.id,
+    },
+  ] as [IPlayer, IPlayer];
+
+  return {
+    board: createBoard(),
+    status: "playing",
+    players,
+    activePlayerId: startingPlayer.id,
+    winnerName: "",
+  };
+};
+
+const checkHorizontalWinner = (board: IBoard, token: IToken): boolean => {
   const columnHeight = board[0].length;
 
   const checker = (x: number, y: number) =>
@@ -99,7 +135,40 @@ export const checkWinner = (board: IBoard, token: IToken): boolean => {
 export const checkMatchNull = (board: IBoard): boolean =>
   board.every((c) => c.every((t) => t !== null));
 
-export const addToken = (
+export const updateGame = (game: IGame, index: number): IGame | null => {
+  const activePlayer = getActivePlayer(game);
+
+  const updatedBoard = playToken(game.board, index, activePlayer.token);
+
+  if (!updatedBoard) {
+    return null;
+  }
+
+  if (checkWinner(updatedBoard, activePlayer.token)) {
+    return {
+      ...game,
+      board: updatedBoard,
+      status: "winner",
+      winnerName: activePlayer.name,
+    };
+  }
+
+  if (checkMatchNull(updatedBoard)) {
+    return {
+      ...game,
+      board: updatedBoard,
+      status: "matchNull",
+    };
+  }
+
+  return {
+    ...game,
+    board: updatedBoard,
+    activePlayerId: activePlayer.nextPlayerId,
+  };
+};
+
+export const playToken = (
   board: IBoard,
   index: number,
   token: IToken
@@ -119,6 +188,7 @@ export const addToken = (
     }
     return t;
   });
+
   return currentBoard.map((c, i) => {
     if (i === columnIndex) {
       return newColumn;
@@ -127,38 +197,13 @@ export const addToken = (
   });
 };
 
-export const getActivePlayerMessage = (
-  players: IPlayer[],
-  activePlayer: string,
-  myId: string
-): string => {
-  if (activePlayer === myId) {
-    return "It's your turn!";
-  }
-  const activePlayerName = players.find((p) => p.id === activePlayer)?.name;
-  return `${activePlayerName} is playing`;
-};
+export const restartGame = (game: IGame): IGame => {
+  const activePlayer = getActivePlayer(game);
 
-export const getWinnerMessage = (
-  players: IPlayer[],
-  previousPlayerId: string,
-  myId: string
-): string => {
-  if (previousPlayerId === myId) {
-    return "You have won this match!";
-  }
-
-  const previousPlayerName = players.find(
-    (p) => p.id === previousPlayerId
-  )?.name;
-
-  return `${previousPlayerName} has won the game`;
-};
-
-export const getPlayerToken = (
-  players: IPlayer[],
-  activePlayer: string
-): IToken => {
-  const playerIndex = players.findIndex((p) => p.id !== activePlayer) + 1;
-  return `P${playerIndex}`;
+  return {
+    ...game,
+    board: createBoard(),
+    activePlayerId: activePlayer.nextPlayerId,
+    status: "playing",
+  };
 };
