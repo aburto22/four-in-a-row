@@ -1,17 +1,11 @@
 import React from "react";
-import styles from "./styles.module.scss";
+import * as styles from "./styles";
 import { IToken } from "@types";
 
 interface TokenProps {
   token: IToken | null;
 }
 
-const Token = ({ token }: TokenProps) => (
-  <div
-    className={`${styles.token} ${token === "red" && styles.red} ${
-      token === "blue" && styles.blue
-    }`}
-  />
-);
+const Token = ({ token }: TokenProps) => <styles.Token colour={token} />;
 
 export default Token;

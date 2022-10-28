@@ -2,7 +2,7 @@
 import React from "react";
 import { useAppSelector } from "@hooks/redux";
 import Column from "@components/Game/Column";
-import styles from "./styles.module.scss";
+import * as styles from "./styles";
 import { useSocketContext } from "@context/SocketContext";
 
 const Board = () => {
@@ -19,19 +19,18 @@ const Board = () => {
   const buttonDisabled = status !== "winner" && status !== "matchNull";
 
   return (
-    <div className={styles.container}>
+    <styles.Container>
       {username && <h1>{`You are: ${username}`}</h1>}
-      <p className={styles.title}>{message}</p>
-      <div className={styles.board}>{Columns}</div>
-      <button
-        className={`${styles.resetButton} ${buttonDisabled && styles.disabled}`}
+      <p>{message}</p>
+      <styles.Board>{Columns}</styles.Board>
+      <styles.Button
         type="button"
         onClick={handleReset}
         disabled={buttonDisabled}
       >
         Play again
-      </button>
-    </div>
+      </styles.Button>
+    </styles.Container>
   );
 };
 

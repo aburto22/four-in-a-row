@@ -19,7 +19,6 @@ if (!socketUrl) {
 const Game = () => {
   const username = useAppSelector((state) => state.user.name);
   const gameStatus = useAppSelector((state) => state.game.status);
-  const winnerId = useAppSelector((state) => state.game.winnerId);
   const dispatch = useAppDispatch();
   const [socket, setSocket] = useState<Socket | null>(null);
 
@@ -47,14 +46,6 @@ const Game = () => {
       dispatch(updateGame(game));
     });
 
-    // socketServer.on("playToken", ({ index, activePlayer }: IPlayTokenData) => {
-    //   dispatch(playToken({ index, activePlayer }));
-    // });
-
-    // socketServer.on("resetGame", ({ activePlayer }: IStartGameData) => {
-    //   dispatch(resetGame(activePlayer));
-    // });
-
     socketServer.on("quitGame", () => {
       dispatch(quitGame());
     });
@@ -68,20 +59,6 @@ const Game = () => {
       socketServer.disconnect();
     };
   }, [username, dispatch]);
-
-  useEffect(() => {
-    if (!socket) {
-      return;
-    }
-
-    if (gameStatus === "winner") {
-      socket.emit("winner", winnerId);
-    }
-
-    if (gameStatus === "matchNull") {
-      socket.emit("matchNull");
-    }
-  }, [socket, winnerId, gameStatus]);
 
   if (!socket) {
     return null;

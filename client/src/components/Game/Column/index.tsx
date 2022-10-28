@@ -2,9 +2,9 @@
 import React from "react";
 import { useAppSelector } from "@hooks/redux";
 import Token from "@components/Game/Token";
-import styles from "./styles.module.scss";
 import { IColumn } from "@types";
 import { useSocketContext } from "@context/SocketContext";
+import * as styles from "./styles";
 
 interface ColumnProps {
   column: IColumn;
@@ -13,6 +13,7 @@ interface ColumnProps {
 
 const Column = ({ column, index }: ColumnProps) => {
   const isPlayerTurn = useAppSelector((state) => state.game.isPlayerTurn);
+  const gameStatus = useAppSelector((state) => state.game.status);
   const userId = useAppSelector((state) => state.game.myId);
   const socket = useSocketContext();
 
@@ -27,17 +28,12 @@ const Column = ({ column, index }: ColumnProps) => {
 
   const canPlay = column.some((t) => t === null);
 
-  const buttonDisabled = !isPlayerTurn || !canPlay;
+  const disabled = !isPlayerTurn || !canPlay || gameStatus !== "playing";
 
   return (
-    <button
-      type="button"
-      className={`${styles.column} ${!buttonDisabled && styles.columnActive}`}
-      onClick={handleClick}
-      disabled={buttonDisabled}
-    >
+    <styles.Column type="button" onClick={handleClick} disabled={disabled}>
       {Tokens}
-    </button>
+    </styles.Column>
   );
 };
 
