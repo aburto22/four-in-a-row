@@ -1,3 +1,4 @@
+import { colors } from "@styles/cssVariables";
 import styled, { css } from "styled-components";
 
 interface ColumnProps {
@@ -5,14 +6,14 @@ interface ColumnProps {
 }
 
 export const Column = styled.button<ColumnProps>`
-  padding: 0.1rem 0.3rem;
+  padding: 0.1rem 0.5rem;
   border: 1px solid black;
   display: flex;
   flex-direction: column-reverse;
   cursor: pointer;
 
   :hover {
-    background-color: red;
+    background-color: ${colors.boardHover};
   }
 
   ${({ disabled }) =>

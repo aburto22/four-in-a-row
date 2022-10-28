@@ -1,12 +1,4 @@
-import type { IGame as IGameServer } from "../../../server/src/types";
-
-export type IToken = string;
-
-export type IColumn = Array<IToken | null>;
-
-export type IBoard = Array<IColumn>;
-
-export type IGame = IGameServer;
+export type { IGame, IBoard, IColumn, IToken } from "../../../server/src/types";
 
 export interface IUser {
   name: string;

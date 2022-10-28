@@ -1,3 +1,4 @@
+import { colors } from "@styles/cssVariables";
 import styled, { css } from "styled-components";
 
 export const Container = styled.div`
@@ -9,8 +10,10 @@ export const Container = styled.div`
 `;
 
 export const Board = styled.div`
-  padding: 2rem 0;
+  margin: 2rem 0;
   display: flex;
+  background-color: ${colors.board};
+  border: 5px solid ${colors.boardBorder};
 `;
 
 interface ButtonProps {

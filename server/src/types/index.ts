@@ -7,7 +7,7 @@ export interface IPlayer {
 
 export type IUser = Pick<IPlayer, "id" | "name">;
 
-export type IToken = "red" | "blue";
+export type IToken = "red" | "black";
 
 export type IColumn = Array<IToken | null>;
 

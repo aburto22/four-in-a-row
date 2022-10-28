@@ -1,7 +1,8 @@
-import styled, { css } from "styled-components";
+import styled from "styled-components";
+import { colors } from "@styles/cssVariables";
 
 interface TokenProps {
-  colour: string | null;
+  colour: "black" | "red" | null;
 }
 
 export const Token = styled.div<TokenProps>`
@@ -10,5 +11,13 @@ export const Token = styled.div<TokenProps>`
   border: 1px solid black;
   border-radius: 50%;
   margin: 0.3rem 0;
-  background-color: ${({ colour }) => colour || "inherit"};
+  background-color: ${({ colour }) => {
+    if (colour === "red") {
+      return colors.tokenRed;
+    }
+    if (colour === "black") {
+      return colors.tokenBlack;
+    }
+    return "white";
+  }};
 `;

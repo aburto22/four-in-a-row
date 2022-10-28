@@ -25,7 +25,7 @@ export const createGame = (player1: IUser, player2: IUser): IGame => {
     },
     {
       ...secondPlayer,
-      token: "blue",
+      token: "black",
       nextPlayerId: startingPlayer.id,
     },
   ] as [IPlayer, IPlayer];
