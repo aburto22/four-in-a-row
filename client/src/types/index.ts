@@ -9,11 +9,6 @@ export interface IPlayer {
   id: string;
 }
 
-export interface IStartGameData {
-  activePlayer: string;
-  players: IPlayer[];
-}
-
 export interface IMessage {
   user: string;
   text: string;

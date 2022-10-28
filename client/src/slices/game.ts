@@ -1,12 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { IBoard, IPlayer, IStartGameData, IGame } from "@types";
+import type { IBoard, IGame } from "@types";
 import { getActivePlayerMessage } from "@lib/game";
 
 interface State {
   board: IBoard;
   message: string;
   isPlayerTurn: boolean;
-  players: IPlayer[];
   myId: string;
   status: "waiting" | "playing" | "matchNull" | "winner";
 }
@@ -15,7 +14,6 @@ const initialState: State = {
   board: Array(7).fill(Array(6).fill(null)),
   message: "waiting for another user before playing",
   isPlayerTurn: false,
-  players: [],
   myId: "",
   status: "waiting",
 };
@@ -28,18 +26,6 @@ const gameSlice = createSlice({
       return {
         ...state,
         myId: action.payload,
-      };
-    },
-    startGame: (state, action: PayloadAction<IStartGameData>) => {
-      const { players, activePlayer } = action.payload;
-      const { myId } = state;
-
-      return {
-        ...state,
-        players,
-        message: getActivePlayerMessage(players, activePlayer, myId),
-        isPlayerTurn: activePlayer === myId,
-        status: "playing",
       };
     },
     updateGame: (state, action: PayloadAction<IGame>) => {
@@ -70,6 +56,6 @@ const gameSlice = createSlice({
   },
 });
 
-export const { startGame, quitGame, setUserId, updateGame } = gameSlice.actions;
+export const { quitGame, setUserId, updateGame } = gameSlice.actions;
 
 export default gameSlice.reducer;

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { addMessage } from "@slices/chat";
-import { startGame, quitGame, setUserId, updateGame } from "@slices/game";
+import { quitGame, setUserId, updateGame } from "@slices/game";
 import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import type { IMessage, IStartGameData, IGame } from "@types";
+import type { IMessage, IGame } from "@types";
 import SocketContext from "@context/SocketContext";
 import Board from "./Board";
 import Waiting from "./Waiting";
@@ -33,13 +33,6 @@ const Game = () => {
 
     socketServer.on("message", (message: IMessage) =>
       dispatch(addMessage(message))
-    );
-
-    socketServer.on(
-      "startGame",
-      ({ activePlayer, players }: IStartGameData) => {
-        dispatch(startGame({ players, activePlayer }));
-      }
     );
 
     socketServer.on("play", (game: IGame) => {
