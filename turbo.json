@@ -5,6 +5,9 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"]
     },
+    "client#build": {
+      "env": ["NEXT_PUBLIC_SOCKET_URL"]
+    },
     "server#build": {
       "env": ["PORT"]
     },
