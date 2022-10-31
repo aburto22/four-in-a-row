@@ -30,6 +30,7 @@
     "ts-node": "^10.8.0",
     "tsconfig-paths": "^4.1.0",
     "tsconfig": "workspace:*",
+    "types": "workspace:*",
     "typescript": "^4.6.4"
   }
 }

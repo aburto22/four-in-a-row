@@ -10,7 +10,7 @@ const getActivePlayer = (game: IGame): IPlayer => {
   return activePlayer;
 };
 
-const createBoard = () => Array(7).fill(Array(6).fill(null));
+const createBoard = (): IBoard => Array(7).fill(Array(6).fill(null));
 
 export const createGame = (player1: IUser, player2: IUser): IGame => {
   const startingPlayerIndex = Math.floor(Math.random() * 2);

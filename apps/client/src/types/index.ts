@@ -1,4 +1,4 @@
-export type { IGame, IBoard, IColumn, IToken } from "../../../server/src/types";
+export type { IGame, IBoard, IColumn, IToken } from "types/game";
 
 export interface IUser {
   name: string;
