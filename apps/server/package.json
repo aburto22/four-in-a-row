@@ -25,10 +25,11 @@
     "@types/node": "18.11.6",
     "@types/uuid": "^8.3.4",
     "eslint": "^8.26.0",
-    "eslint-config-custom": "workspace:^0.0.0",
+    "eslint-config-custom": "workspace:*",
     "nodemon": "^2.0.16",
     "ts-node": "^10.8.0",
     "tsconfig-paths": "^4.1.0",
+    "tsconfig": "workspace:*",
     "typescript": "^4.6.4"
   }
 }
