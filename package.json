@@ -12,7 +12,7 @@
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
-    "deploy": ""
+    "deploy": "cd apps/server && flyctl deploy"
   },
   "devDependencies": {
     "eslint-config-custom": "workspace:*",

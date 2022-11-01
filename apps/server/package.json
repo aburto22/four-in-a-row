@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
+    "build": "tsc && tsc-alias",
     "start": "node build/server.js",
     "dev": "nodemon src/server.ts",
     "lint": "eslint .",
@@ -28,8 +28,9 @@
     "eslint-config-custom": "workspace:*",
     "nodemon": "^2.0.16",
     "ts-node": "^10.8.0",
-    "tsconfig-paths": "^4.1.0",
+    "tsc-alias": "^1.7.0",
     "tsconfig": "workspace:*",
+    "tsconfig-paths": "^4.1.0",
     "types": "workspace:*",
     "typescript": "^4.6.4"
   }

@@ -1,12 +1,11 @@
-# fly.toml file generated for four-websockets on 2022-10-26T14:48:48+02:00
+# fly.toml file generated for four-sockets on 2022-11-01T08:56:09+01:00
 
-app = "four-websockets"
+app = "four-sockets"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
 
 [env]
-  PORT = "8080"
 
 [experimental]
   allowed_public_ports = []
