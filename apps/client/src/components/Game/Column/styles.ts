@@ -6,7 +6,7 @@ interface ColumnProps {
 }
 
 export const Column = styled.button<ColumnProps>`
-  padding: 0.1rem 0.5rem;
+  padding: 0.1rem 0.3rem;
   border: 1px solid black;
   display: flex;
   flex-direction: column-reverse;

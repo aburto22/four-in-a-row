@@ -18,6 +18,7 @@ export const Aside = styled.aside<AsideProps>`
   gap: 1rem;
   transition: transform 300ms;
   transform: translateX(${({ isExpanded }) => (isExpanded ? "0 " : "-100%")});
+  z-index: 1;
 
   @media (min-width: ${dimensions.breakpoint}) {
     transform: unset;

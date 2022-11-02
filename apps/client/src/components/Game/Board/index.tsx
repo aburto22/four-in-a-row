@@ -16,20 +16,22 @@ const Board = () => {
     socket.emit("resetGame");
   };
 
-  const buttonDisabled = status !== "winner" && status !== "matchNull";
+  const showButton = status === "winner" || status === "matchNull";
 
   return (
     <styles.Container>
       {username && <h1>{`You are: ${username}`}</h1>}
       <p>{message}</p>
       <styles.Board>{Columns}</styles.Board>
-      <styles.Button
-        type="button"
-        onClick={handleReset}
-        disabled={buttonDisabled}
-      >
-        Play again
-      </styles.Button>
+      {showButton && (
+        <styles.Button
+          type="button"
+          onClick={handleReset}
+          disabled={!showButton}
+        >
+          Play again
+        </styles.Button>
+      )}
     </styles.Container>
   );
 };
