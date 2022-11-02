@@ -20,7 +20,7 @@ const Home = () => {
   return (
     <styles.StyledMain>
       <styles.Text>
-        To start playing, choose a username and click start.
+        To start playing, choose an username and click start.
       </styles.Text>
       <styles.StyledForm onSubmit={handleSubmit}>
         <styles.StyledLabel htmlFor="username">

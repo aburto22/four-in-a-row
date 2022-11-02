@@ -1,5 +1,6 @@
 {
   "root": true,
   "extends": ["custom/next"],
-  "ignorePatterns": ["next.config.js", ".next", "node_modules"]
+  "ignorePatterns": ["next.config.js", ".next", "node_modules"],
+  "rules": {}
 }
