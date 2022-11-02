@@ -11,3 +11,7 @@ export const colors = {
   boardHover: "#aa8f64",
   boardBorder: "#714e39",
 };
+
+export const dimensions = {
+  asideWidth: "18rem",
+};

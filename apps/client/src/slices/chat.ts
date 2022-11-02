@@ -1,19 +1,35 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IMessage } from "@types";
+import { IMessage, IUser } from "@types";
 
-const initialState: IMessage[] = [];
+type State = {
+  messages: IMessage[];
+  users: IUser[];
+};
+
+const initialState: State = {
+  messages: [],
+  users: [],
+};
 
 const chatSlice = createSlice({
   name: "chat",
   initialState,
   reducers: {
-    addMessage: (state, action: PayloadAction<IMessage>) => [
-      ...state,
-      action.payload,
-    ],
+    addMessage: (state, action: PayloadAction<IMessage>) => {
+      return {
+        ...state,
+        messages: [...state.messages, action.payload],
+      };
+    },
+    updateUsers: (state, action: PayloadAction<IUser[]>) => {
+      return {
+        ...state,
+        users: action.payload,
+      };
+    },
   },
 });
 
-export const { addMessage } = chatSlice.actions;
+export const { addMessage, updateUsers } = chatSlice.actions;
 
 export default chatSlice.reducer;

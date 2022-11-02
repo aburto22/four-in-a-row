@@ -6,7 +6,7 @@ import * as styles from "./styles";
 
 const Chat = () => {
   const [currentTime, setCurrentTime] = useState(new Date());
-  const messages = useAppSelector((state) => state.chat);
+  const messages = useAppSelector((state) => state.chat.messages);
   const messagesRef = useRef<HTMLDivElement | null>(null);
 
   useLayoutEffect(() => {
@@ -28,17 +28,15 @@ const Chat = () => {
   }, [currentTime]);
 
   return (
-    <styles.Section>
-      <styles.Chat>
-        <styles.Messages ref={messagesRef}>
-          {messages.length > 0 &&
-            messages.map((m) => (
-              <Message key={m.id} message={m} currentTime={currentTime} />
-            ))}
-        </styles.Messages>
-        <Form />
-      </styles.Chat>
-    </styles.Section>
+    <styles.Chat>
+      <styles.Messages ref={messagesRef}>
+        {messages.length > 0 &&
+          messages.map((m) => (
+            <Message key={m.id} message={m} currentTime={currentTime} />
+          ))}
+      </styles.Messages>
+      <Form />
+    </styles.Chat>
   );
 };
 

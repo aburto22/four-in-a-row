@@ -6,12 +6,12 @@ type GameLayoutProps = {
   children: React.ReactNode;
 };
 
-const GameLayout = ({ children }: GameLayoutProps) => (
-  <styles.App>
-    <Header />
-    {children}
-    <Footer />
-  </styles.App>
-);
-
-export default GameLayout;
+export default function GameLayout({ children }: GameLayoutProps) {
+  return (
+    <styles.App>
+      <Header />
+      {children}
+      <Footer />
+    </styles.App>
+  );
+}

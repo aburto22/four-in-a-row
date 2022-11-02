@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { addMessage } from "@slices/chat";
+import { addMessage, updateUsers } from "@slices/chat";
 import { quitGame, setUserId, updateGame } from "@slices/game";
 import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import type { IMessage, IGame } from "@types";
+import type { IMessage, IGame, IUser } from "@types";
 import SocketContext from "@context/SocketContext";
 import Board from "./Board";
 import Waiting from "./Waiting";
-import Chat from "./Chat";
+import Aside from "./Aside";
 import * as styles from "./styles";
 
 const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
@@ -29,6 +29,10 @@ const Game = () => {
 
     socketServer.on("assignUserId", (id: string) => {
       dispatch(setUserId(id));
+    });
+
+    socketServer.on("updateChatUsers", (users: IUser[]) => {
+      dispatch(updateUsers(users));
     });
 
     socketServer.on("message", (message: IMessage) =>
@@ -59,9 +63,9 @@ const Game = () => {
 
   return (
     <SocketContext.Provider value={socket}>
+      <Aside />
       <styles.Main>
         {gameStatus === "waiting" ? <Waiting /> : <Board />}
-        <Chat />
       </styles.Main>
     </SocketContext.Provider>
   );

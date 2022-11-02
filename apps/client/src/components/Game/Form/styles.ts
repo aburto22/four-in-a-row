@@ -3,7 +3,6 @@ import { colors } from "@styles/cssVariables";
 
 export const Form = styled.form`
   display: flex;
-  align-items: stretch;
 `;
 
 export const Input = styled.input`

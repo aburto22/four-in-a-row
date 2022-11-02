@@ -51,35 +51,41 @@ io.on("connection", (socket) => {
     addUserToWaitingRoom(user.id);
     socket.join(waitingRoomId);
 
+    const { users } = getWaitingRoom();
+
     socket.emit("assignUserId", user.id);
+
+    io.in(waitingRoomId).emit("updateChatUsers", users);
   });
 
   socket.on("startGame", () => {
-    const waitingRoom = getWaitingRoom();
-    const { users } = waitingRoom;
+    const { users, id: waitingRoomId } = getWaitingRoom();
 
-    if (users.length >= 2) {
-      const firstTwoUsers = users.slice(0, 2) as [IUser, IUser];
-      const room = createRoom(firstTwoUsers);
-
-      firstTwoUsers.forEach((u) => {
-        removeUserFromWaitingRoom(u.id);
-
-        const opponentName = firstTwoUsers.find((ou) => ou.id !== u.id)?.name;
-        const text = `${opponentName} has joined your room.`;
-
-        const s = io.sockets.sockets.get(u.id);
-        s?.leave(waitingRoom.id);
-        s?.join(room.id);
-        s?.emit("message", createMessage(chatBot, text));
-      });
-
-      io.in(room.id).emit("play", room.game);
-      io.in(room.id).emit(
-        "message",
-        createMessage(chatBot, "Game starts now!")
-      );
+    if (users.length < 2) {
+      return;
     }
+
+    const firstTwoUsers = users.slice(0, 2) as [IUser, IUser];
+    const room = createRoom(firstTwoUsers);
+
+    firstTwoUsers.forEach((u) => {
+      removeUserFromWaitingRoom(u.id);
+
+      const opponentName = firstTwoUsers.find((ou) => ou.id !== u.id)?.name;
+      const text = `${opponentName} has joined your room.`;
+
+      const s = io.sockets.sockets.get(u.id);
+      s?.leave(waitingRoomId);
+      s?.join(room.id);
+      s?.emit("message", createMessage(chatBot, text));
+    });
+
+    io.in(room.id).emit("play", room.game);
+    io.in(room.id).emit("message", createMessage(chatBot, "Game starts now!"));
+    io.in(room.id).emit("updateChatUsers", firstTwoUsers);
+
+    const { users: updatedUsers } = getWaitingRoom();
+    io.in(waitingRoomId).emit("updateChatUsers", updatedUsers);
   });
 
   socket.on("playToken", ({ index }: PlayTokenData) => {
@@ -148,6 +154,8 @@ io.on("connection", (socket) => {
     removeUserFromRoom(room.id, user.id);
 
     if (room.type === "waiting") {
+      const { id: waitingRoomId, users } = getWaitingRoom();
+      io.in(waitingRoomId).emit("updateChatUsers", users);
       return;
     }
 
@@ -161,6 +169,10 @@ io.on("connection", (socket) => {
       s?.leave(room.id);
       s?.join(waitingRoomId);
     });
+
+    const { users } = getWaitingRoom();
+
+    io.in(waitingRoomId).emit("updateChatUsers", users);
   });
 
   socket.on("message", ({ text }: MessageData) => {
