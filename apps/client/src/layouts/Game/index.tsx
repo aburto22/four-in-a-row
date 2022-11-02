@@ -2,11 +2,11 @@ import Footer from "@components/Footer";
 import Header from "@components/Header";
 import * as styles from "./style";
 
-type LayoutProps = {
+type GameLayoutProps = {
   children: React.ReactNode;
 };
 
-const Layout = ({ children }: LayoutProps) => (
+const GameLayout = ({ children }: GameLayoutProps) => (
   <styles.App>
     <Header />
     {children}
@@ -14,4 +14,4 @@ const Layout = ({ children }: LayoutProps) => (
   </styles.App>
 );
 
-export default Layout;
+export default GameLayout;
