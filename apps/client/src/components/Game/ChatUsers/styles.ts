@@ -8,7 +8,7 @@ export const Container = styled.div`
 export const Users = styled.ul`
   height: 100%;
   background-color: ${colors.snow};
-  padding: 0.5rem;
+  padding: 0.1rem;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -19,5 +19,10 @@ export const User = styled.li`
   display: flex;
   gap: 0.3rem;
   align-items: center;
-  padding: 0.1rem;
+  padding: 0.3rem;
+
+  :first-child {
+    background-color: ${colors.blueDark};
+    color: ${colors.snow};
+  }
 `;
