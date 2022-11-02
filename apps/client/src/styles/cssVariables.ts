@@ -14,4 +14,5 @@ export const colors = {
 
 export const dimensions = {
   asideWidth: "18rem",
+  breakpoint: "45rem",
 };

@@ -7,5 +7,8 @@ export const App = styled.div`
   grid-template-columns: 100%;
   grid-template-rows: 5rem 1fr;
   padding: 1rem;
-  margin-left: ${dimensions.asideWidth};
+
+  @media (min-width: ${dimensions.breakpoint}) {
+    margin-left: ${dimensions.asideWidth};
+  }
 `;

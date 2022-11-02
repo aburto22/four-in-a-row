@@ -11,7 +11,7 @@ export default function ChatUsers() {
       <styles.Users>
         {users.map((user) => (
           <styles.User key={user.name}>
-            <Svg name="avatar" width={24} fill="green" stroke="none" />
+            <Svg name="avatar" width={22} fill="green" stroke="none" />
             {capitalize(user.name)}
           </styles.User>
         ))}
