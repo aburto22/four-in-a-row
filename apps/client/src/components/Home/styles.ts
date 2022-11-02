@@ -7,13 +7,21 @@ export const StyledMain = styled.main`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  gap: 3rem;
   padding: 1rem;
+`;
+
+export const Text = styled.p`
+  text-align: center;
+  font-size: 1.2rem;
+  color: ${colors.blueDark};
 `;
 
 export const StyledForm = styled.form`
   max-width: 100%;
   width: 30rem;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   background-color: ${colors.blueDark};
   height: 15rem;
   display: flex;
@@ -21,6 +29,7 @@ export const StyledForm = styled.form`
   justify-content: center;
   align-items: center;
   color: ${colors.snow};
+  border-radius: 0.5rem;
 `;
 
 export const StyledLabel = styled.label`

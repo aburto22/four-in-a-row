@@ -1,11 +1,13 @@
 import styled from "styled-components";
 
-export const StyledHeader = styled.header`
+export const Header = styled.header`
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 1rem;
 `;
 
-export const StyledTitle = styled.h1`
+export const Title = styled.h1`
+  font-weight: 500;
   font-size: 2rem;
 `;
