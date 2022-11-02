@@ -14,7 +14,7 @@ const Home = () => {
 
     dispatch(setUserName(username));
     setUsername("");
-    push("/waiting");
+    push("/game");
   };
 
   return (
