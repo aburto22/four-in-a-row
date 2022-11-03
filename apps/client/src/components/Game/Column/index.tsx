@@ -14,14 +14,10 @@ interface ColumnProps {
 const Column = ({ column, index }: ColumnProps) => {
   const isPlayerTurn = useAppSelector((state) => state.game.isPlayerTurn);
   const gameStatus = useAppSelector((state) => state.game.status);
-  const userId = useAppSelector((state) => state.game.myId);
   const socket = useSocketContext();
 
   const handleClick = () => {
-    socket.emit("playToken", {
-      index,
-      userId,
-    });
+    socket.emit("playToken", index);
   };
 
   const Tokens = column.map((t, i) => <Token key={i} token={t} />);

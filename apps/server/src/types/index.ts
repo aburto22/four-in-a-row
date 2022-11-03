@@ -1,17 +1,15 @@
-export type { IPlayer, IToken, IColumn, IBoard, IGame } from "types/game";
-import type { IPlayer, IGame } from "types/game";
-
-export type IUser = Pick<IPlayer, "id" | "name">;
-
-export interface PlayTokenData {
-  index: number;
-  userId: string;
-}
-
-export interface MessageData {
-  user: string;
-  text: string;
-}
+export type {
+  IPlayer,
+  IUser,
+  IToken,
+  IColumn,
+  IBoard,
+  IGame,
+  IMessage,
+  ClientToServerEvents,
+  ServerToClientEvents,
+} from "types/game";
+import type { IUser, IGame } from "types/game";
 
 export interface IRoom {
   id: string;

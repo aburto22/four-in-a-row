@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
-import { useAppDispatch } from "../../hooks/redux";
-import { setUserName } from "../../slices/user";
+import { useAppDispatch } from "@hooks/redux";
+import { setUserName } from "@slices/user";
 import * as styles from "./styles";
 
 const Home = () => {

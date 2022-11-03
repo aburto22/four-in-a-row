@@ -3,6 +3,7 @@ import { IUser } from "@types";
 
 const initialState: IUser = {
   name: "",
+  id: "",
 };
 
 const userSlice = createSlice({
@@ -13,9 +14,13 @@ const userSlice = createSlice({
       ...state,
       name: action.payload,
     }),
+    setUserId: (state, action: PayloadAction<string>) => ({
+      ...state,
+      id: action.payload,
+    }),
   },
 });
 
-export const { setUserName } = userSlice.actions;
+export const { setUserName, setUserId } = userSlice.actions;
 
 export default userSlice.reducer;

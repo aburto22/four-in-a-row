@@ -14,7 +14,7 @@ import {
   updateGameRoom,
 } from "@lib/rooms";
 import { createMessage } from "@lib/messages";
-import type { PlayTokenData, MessageData, IUser } from "@types";
+import type { IUser, ClientToServerEvents, ServerToClientEvents } from "@types";
 import { restartGame, updateGame } from "@lib/game";
 
 const app = express();
@@ -22,7 +22,7 @@ const server = createServer(app);
 
 const chatBot = "Chat Bot";
 
-const io = new Server(server, {
+const io = new Server<ClientToServerEvents, ServerToClientEvents>(server, {
   cors: {
     origin: [
       "http://localhost:3000",
@@ -55,7 +55,7 @@ io.on("connection", (socket) => {
 
     socket.emit("assignUserId", user.id);
 
-    io.in(waitingRoomId).emit("updateChatUsers", users);
+    io.in(waitingRoomId).emit("updateChatUsers", { status: "waiting", users });
   });
 
   socket.on("startGame", () => {
@@ -82,13 +82,19 @@ io.on("connection", (socket) => {
 
     io.in(room.id).emit("play", room.game);
     io.in(room.id).emit("message", createMessage(chatBot, "Game starts now!"));
-    io.in(room.id).emit("updateChatUsers", firstTwoUsers);
+    io.in(room.id).emit("updateChatUsers", {
+      status: "playing",
+      users: room.game.players,
+    });
 
     const { users: updatedUsers } = getWaitingRoom();
-    io.in(waitingRoomId).emit("updateChatUsers", updatedUsers);
+    io.in(waitingRoomId).emit("updateChatUsers", {
+      status: "waiting",
+      users: updatedUsers,
+    });
   });
 
-  socket.on("playToken", ({ index }: PlayTokenData) => {
+  socket.on("playToken", (index) => {
     const room = getGameRoomByUserId(user.id);
 
     if (!room) {
@@ -155,7 +161,10 @@ io.on("connection", (socket) => {
 
     if (room.type === "waiting") {
       const { id: waitingRoomId, users } = getWaitingRoom();
-      io.in(waitingRoomId).emit("updateChatUsers", users);
+      io.in(waitingRoomId).emit("updateChatUsers", {
+        status: "waiting",
+        users,
+      });
       return;
     }
 
@@ -172,10 +181,10 @@ io.on("connection", (socket) => {
 
     const { users } = getWaitingRoom();
 
-    io.in(waitingRoomId).emit("updateChatUsers", users);
+    io.in(waitingRoomId).emit("updateChatUsers", { status: "waiting", users });
   });
 
-  socket.on("message", ({ text }: MessageData) => {
+  socket.on("message", (text) => {
     const room = getRoomByUserId(user.id);
 
     if (!room) {

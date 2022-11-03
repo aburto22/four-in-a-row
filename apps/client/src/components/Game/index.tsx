@@ -2,8 +2,9 @@ import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { addMessage, updateUsers } from "@slices/chat";
 import { quitGame, setUserId, updateGame } from "@slices/game";
+import { setUserId as setUserIdGeneral } from "@slices/user";
 import { useAppDispatch, useAppSelector } from "@hooks/redux";
-import type { IMessage, IGame, IUser } from "@types";
+import type { ClientToServerEvents, ServerToClientEvents } from "@types";
 import SocketContext from "@context/SocketContext";
 import Board from "./Board";
 import Waiting from "./Waiting";
@@ -20,26 +21,29 @@ const Game = () => {
   const username = useAppSelector((state) => state.user.name);
   const gameStatus = useAppSelector((state) => state.game.status);
   const dispatch = useAppDispatch();
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket<
+    ClientToServerEvents,
+    ServerToClientEvents
+  > | null>(null);
 
   useEffect(() => {
-    const socketServer = io(socketUrl);
+    const socketServer: Socket<ServerToClientEvents, ClientToServerEvents> =
+      io(socketUrl);
 
     setSocket(socketServer);
 
-    socketServer.on("assignUserId", (id: string) => {
-      dispatch(setUserId(id));
+    socketServer.on("assignUserId", (userId) => {
+      dispatch(setUserId(userId));
+      dispatch(setUserIdGeneral(userId));
     });
 
-    socketServer.on("updateChatUsers", (users: IUser[]) => {
+    socketServer.on("updateChatUsers", (users) => {
       dispatch(updateUsers(users));
     });
 
-    socketServer.on("message", (message: IMessage) =>
-      dispatch(addMessage(message))
-    );
+    socketServer.on("message", (message) => dispatch(addMessage(message)));
 
-    socketServer.on("play", (game: IGame) => {
+    socketServer.on("play", (game) => {
       dispatch(updateGame(game));
     });
 

@@ -1,15 +1,23 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IMessage, IUser } from "@types";
+import { IMessage, IPlayer, IUser, UpdateChatUsers } from "@types";
 
-type State = {
+type GameState = {
+  status: "playing";
+  users: IPlayer[];
   messages: IMessage[];
-  users: IUser[];
 };
 
-const initialState: State = {
+type WaitingState = {
+  status: "waiting";
+  users: IUser[];
+  messages: IMessage[];
+};
+
+const initialState = {
   messages: [],
   users: [],
-};
+  status: "waiting",
+} as GameState | WaitingState;
 
 const chatSlice = createSlice({
   name: "chat",
@@ -21,10 +29,18 @@ const chatSlice = createSlice({
         messages: [...state.messages, action.payload],
       };
     },
-    updateUsers: (state, action: PayloadAction<IUser[]>) => {
+    updateUsers: (state, action: PayloadAction<UpdateChatUsers>) => {
+      if (action.payload.status === "waiting") {
+        return {
+          ...state,
+          status: action.payload.status,
+          users: action.payload.users,
+        };
+      }
       return {
         ...state,
-        users: action.payload,
+        status: action.payload.status,
+        users: action.payload.users,
       };
     },
   },
