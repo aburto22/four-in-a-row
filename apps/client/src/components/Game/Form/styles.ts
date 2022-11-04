@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 import { colors } from "@styles/cssVariables";
 
 export const Form = styled.form`
@@ -21,4 +21,10 @@ export const Button = styled.button`
   border-radius: 0 0.3rem 0.3rem 0;
   width: 20%;
   max-width: 4.5rem;
+
+  ${({ disabled }) =>
+    disabled &&
+    css`
+      opacity: 0.7;
+    `}
 `;

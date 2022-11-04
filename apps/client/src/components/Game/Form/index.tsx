@@ -8,9 +8,16 @@ const Form = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!text) {
+      return;
+    }
+
     socket.emit("message", text);
     setText("");
   };
+
+  const disabled = !text;
 
   return (
     <styles.Form onSubmit={handleSubmit}>
@@ -19,7 +26,7 @@ const Form = () => {
         value={text}
         onChange={(e) => setText(e.target.value)}
       />
-      <styles.Button type="submit">Send</styles.Button>
+      <styles.Button type="submit" disabled={disabled}>Send</styles.Button>
     </styles.Form>
   );
 };
