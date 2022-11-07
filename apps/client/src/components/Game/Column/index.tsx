@@ -12,7 +12,8 @@ interface ColumnProps {
 }
 
 const Column = ({ column, index }: ColumnProps) => {
-  const isPlayerTurn = useAppSelector((state) => state.game.isPlayerTurn);
+  const activePlayerId = useAppSelector((state) => state.game.activePlayerId);
+  const userId = useAppSelector((state) => state.game.myId);
   const gameStatus = useAppSelector((state) => state.game.status);
   const socket = useSocketContext();
 
@@ -23,6 +24,8 @@ const Column = ({ column, index }: ColumnProps) => {
   const Tokens = column.map((t, i) => <Token key={i} token={t} />);
 
   const canPlay = column.some((t) => t === null);
+
+  const isPlayerTurn = activePlayerId === userId;
 
   const disabled = !isPlayerTurn || !canPlay || gameStatus !== "playing";
 

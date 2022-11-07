@@ -5,7 +5,7 @@ import { getActivePlayerMessage } from "@lib/game";
 interface State {
   board: IBoard;
   message: string;
-  isPlayerTurn: boolean;
+  activePlayerId: string;
   myId: string;
   status: "waiting" | "playing" | "matchNull" | "winner";
 }
@@ -13,7 +13,7 @@ interface State {
 const initialState: State = {
   board: Array(7).fill(Array(6).fill(null)),
   message: "waiting for another user before playing",
-  isPlayerTurn: false,
+  activePlayerId: "",
   myId: "",
   status: "waiting",
 };
@@ -47,7 +47,7 @@ const gameSlice = createSlice({
       return {
         ...state,
         board,
-        isPlayerTurn: state.myId === activePlayerId,
+        activePlayerId,
         status,
         message,
       };
