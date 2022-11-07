@@ -9,6 +9,13 @@ const Home = () => {
   const dispatch = useAppDispatch();
   const { push } = useRouter();
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value.length > 10) {
+      return;
+    }
+    setUsername(e.target.value);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -29,7 +36,8 @@ const Home = () => {
             type="text"
             name="username"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleChange}
+            maxLength={10}
             required
           />
         </styles.StyledLabel>
