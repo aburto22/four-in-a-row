@@ -4,6 +4,7 @@ import { useAppSelector } from "@hooks/redux";
 import Token from "@components/Game/Token";
 import { IColumn } from "@types";
 import { useSocketContext } from "@context/SocketContext";
+import { useSpring } from "@react-spring/web";
 import * as styles from "./styles";
 
 interface ColumnProps {
@@ -17,6 +18,14 @@ const Column = ({ column, index }: ColumnProps) => {
   const gameStatus = useAppSelector((state) => state.game.status);
   const chat = useAppSelector((state) => state.chat);
   const socket = useSocketContext();
+
+  const props = useSpring({
+    to: { opacity: 1 },
+    from: { opacity: 0 },
+    loop: {
+      reverse: true,
+    },
+  });
 
   const handleClick = () => {
     socket.emit("playToken", index);
@@ -40,7 +49,7 @@ const Column = ({ column, index }: ColumnProps) => {
   return (
     <styles.Column type="button" onClick={handleClick} disabled={disabled}>
       {showPlaceholderToken && (
-        <styles.PlaceholderToken>
+        <styles.PlaceholderToken style={props}>
           <Token token={playerColor} />
         </styles.PlaceholderToken>
       )}

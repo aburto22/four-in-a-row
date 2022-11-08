@@ -1,8 +1,9 @@
 import { colors } from "@styles/cssVariables";
+import { animated } from "@react-spring/web";
 import styled, { css } from "styled-components";
 
-export const PlaceholderToken = styled.span`
-  display: none;
+export const PlaceholderToken = styled(animated.span)`
+  display: block;
   position: absolute;
   bottom: calc(100% + 0.5rem);
 `;
