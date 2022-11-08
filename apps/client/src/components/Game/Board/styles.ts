@@ -15,7 +15,7 @@ export const Message = styled.p`
 `;
 
 export const Board = styled.div`
-  margin: 2rem 0;
+  margin: 3.5rem 0 2rem;
   display: flex;
   background-color: ${colors.board};
   border: 5px solid ${colors.boardBorder};
