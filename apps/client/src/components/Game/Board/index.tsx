@@ -7,7 +7,6 @@ import { useSocketContext } from "@context/SocketContext";
 
 const Board = () => {
   const { board, message, status } = useAppSelector((state) => state.game);
-  const username = useAppSelector((state) => state.user.name);
   const socket = useSocketContext();
 
   const Columns = board.map((c, i) => <Column key={i} column={c} index={i} />);
@@ -20,8 +19,7 @@ const Board = () => {
 
   return (
     <styles.Container>
-      {username && <h1>{`You are: ${username}`}</h1>}
-      <p>{message}</p>
+      <styles.Message>{message}</styles.Message>
       <styles.Board>{Columns}</styles.Board>
       {showButton && (
         <styles.Button

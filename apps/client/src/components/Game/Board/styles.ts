@@ -8,6 +8,12 @@ export const Container = styled.section`
   align-items: center;
 `;
 
+export const Message = styled.p`
+  font-size: 2rem;
+  color: ${colors.blueDark};
+  text-shadow: 0 0 3px ${colors.snow};
+`;
+
 export const Board = styled.div`
   margin: 2rem 0;
   display: flex;
