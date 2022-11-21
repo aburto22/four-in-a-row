@@ -24,6 +24,8 @@ const Home = () => {
     push("/game");
   };
 
+  const disabled = !username;
+
   return (
     <styles.StyledMain>
       <styles.Text>
@@ -41,7 +43,9 @@ const Home = () => {
             required
           />
         </styles.StyledLabel>
-        <styles.StyledButton type="submit">Start!</styles.StyledButton>
+        <styles.StyledButton type="submit" disabled={disabled}>
+          Start!
+        </styles.StyledButton>
       </styles.StyledForm>
     </styles.StyledMain>
   );
