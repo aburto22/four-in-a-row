@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useAppSelector } from "@hooks/redux";
 import Token from "@components/Game/Token";
 import { IColumn } from "@types";
+import { getTokenDropDistance } from "@lib/game";
 import { useSocketContext } from "@context/SocketContext";
 import { useSpring, easings } from "@react-spring/web";
 import * as styles from "./styles";
@@ -11,16 +12,6 @@ interface ColumnProps {
   index: number;
 }
 
-const getTokenDropDistance = (column: IColumn): number => {
-  const index = column.findIndex((t) => t === null);
-
-  if (index === -1) {
-    return 0;
-  }
-
-  return (column.length - index - 1) * (0.3 + 0.3 + 2) * 16 + 0.1 * 16;
-};
-
 const Column = ({ column, index }: ColumnProps) => {
   const columnRef = useRef<HTMLButtonElement | null>(null);
   const isColumnClicked = useRef(false);
@@ -29,6 +20,8 @@ const Column = ({ column, index }: ColumnProps) => {
   const gameStatus = useAppSelector((state) => state.game.status);
   const chat = useAppSelector((state) => state.chat);
   const socket = useSocketContext();
+
+  const isPlayerTurn = activePlayerId === userId;
 
   const [springStyles, api] = useSpring(() => ({
     from: { opacity: 0, y: -48, display: "none" },
@@ -51,13 +44,14 @@ const Column = ({ column, index }: ColumnProps) => {
     const column = columnRef.current;
 
     const handleMouseEnter = () => {
-      if (!isColumnClicked.current) {
+      if (!isColumnClicked.current && isPlayerTurn) {
         api.start({ opacity: 1, display: "block", y: -48 });
+        socket.emit("thinkingMove", index);
       }
     };
 
     const handleMouseLeave = () => {
-      if (!isColumnClicked.current) {
+      if (!isColumnClicked.current && isPlayerTurn) {
         api.start({ opacity: 0, display: "none", y: -48 });
       }
     };
@@ -73,7 +67,7 @@ const Column = ({ column, index }: ColumnProps) => {
         column.removeEventListener("mouseleave", handleMouseLeave);
       }
     };
-  }, [api]);
+  }, [api, isPlayerTurn, index, socket]);
 
   const handleClick = () => {
     isColumnClicked.current = true;
@@ -81,11 +75,7 @@ const Column = ({ column, index }: ColumnProps) => {
     api.start({ opacity: 1, y: distance, display: "block" });
   };
 
-  const Tokens = column.map((t, i) => <Token key={i} token={t} />);
-
   const canPlay = column.some((t) => t === null);
-
-  const isPlayerTurn = activePlayerId === userId;
 
   const disabled = !isPlayerTurn || !canPlay || gameStatus !== "playing";
 
@@ -108,7 +98,9 @@ const Column = ({ column, index }: ColumnProps) => {
           <Token token={playerColor} />
         </styles.PlaceholderToken>
       )}
-      {Tokens}
+      {column.map((t, i) => (
+        <Token key={i} token={t} />
+      ))}
     </styles.Column>
   );
 };

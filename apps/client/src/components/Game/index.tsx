@@ -47,6 +47,10 @@ const Game = () => {
       dispatch(updateGame(game));
     });
 
+    socketServer.on("thinkingMove", (index) => {
+      console.log(index);
+    });
+
     socketServer.on("quitGame", () => {
       dispatch(quitGame());
     });

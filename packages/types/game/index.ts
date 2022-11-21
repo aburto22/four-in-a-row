@@ -46,6 +46,7 @@ export type ClientToServerEvents = {
   playToken: (index: number) => void;
   resetGame: () => void;
   message: (message: string) => void;
+  thinkingMove: (index: number) => void;
 };
 
 export type ServerToClientEvents = {
@@ -55,4 +56,5 @@ export type ServerToClientEvents = {
   play: (game: IGame) => void;
   invalidPlay: () => void;
   quitGame: () => void;
+  thinkingMove: (index: number) => void;
 };

@@ -94,6 +94,17 @@ io.on("connection", (socket) => {
     });
   });
 
+  socket.on("thinkingMove", (index) => {
+    const room = getGameRoomByUserId(user.id);
+
+    if (!room) {
+      console.error("no room!");
+      return;
+    }
+
+    socket.in(room.id).emit("thinkingMove", index);
+  });
+
   socket.on("playToken", (index) => {
     const room = getGameRoomByUserId(user.id);
 
