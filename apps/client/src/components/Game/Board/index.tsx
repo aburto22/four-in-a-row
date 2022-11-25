@@ -4,6 +4,7 @@ import { useAppSelector } from "@hooks/redux";
 import Column from "@components/Game/Column";
 import * as styles from "./styles";
 import { useSocketContext } from "@context/SocketContext";
+import PlaceholderToken from "../PlaceholderToken";
 
 const Board = () => {
   const { board, message, status } = useAppSelector((state) => state.game);
@@ -20,7 +21,10 @@ const Board = () => {
   return (
     <styles.Container>
       <styles.Message>{message}</styles.Message>
-      <styles.Board>{Columns}</styles.Board>
+      <styles.Board>
+        <PlaceholderToken />
+        {Columns}
+      </styles.Board>
       {showButton && (
         <styles.Button
           type="button"

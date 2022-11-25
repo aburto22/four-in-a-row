@@ -1,13 +1,10 @@
 import React, { useEffect, useRef } from "react";
-import { useAppSelector } from "@hooks/redux";
+import { useAppSelector, useAppDispatch } from "@hooks/redux";
 import Token from "@components/Game/Token";
 import { IColumn } from "@types";
-import { getTokenDropDistance } from "@lib/game";
 import { useSocketContext } from "@context/SocketContext";
-import { useSpring, easings } from "@react-spring/web";
 import * as styles from "./styles";
-import { useDispatch } from "react-redux";
-import { setToken } from "@slices/placeholderToken";
+import { clickToken, setToken } from "@slices/placeholderToken";
 
 interface ColumnProps {
   column: IColumn;
@@ -21,30 +18,10 @@ const Column = ({ column, index }: ColumnProps) => {
   const userId = useAppSelector((state) => state.game.myId);
   const gameStatus = useAppSelector((state) => state.game.status);
   const socket = useSocketContext();
-  const placeholderToken = useAppSelector((state) => state.placeholderToken);
   const chat = useAppSelector((state) => state.chat);
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const isPlayerTurn = activePlayerId === userId;
-
-  const [springStyles, api] = useSpring(() => ({
-    from: { opacity: 1, y: -48, display: "block" },
-    config: {
-      tension: 160,
-      friction: 12,
-      bounce: 1.3,
-      easing: easings.easeOutBounce,
-    },
-    onRest: () => {
-      if (isColumnClicked.current) {
-        isColumnClicked.current = false;
-        api.start({ opacity: 1, y: -48, display: "block" });
-        socket.emit("playToken", index);
-        socket.emit("thinkingMove", { index, token: null });
-        dispatch(setToken({ index, token: null }));
-      }
-    },
-  }));
 
   useEffect(() => {
     const column = columnRef.current;
@@ -57,7 +34,7 @@ const Column = ({ column, index }: ColumnProps) => {
       if (chat.status === "playing") {
         const token = chat.users.find((p) => p.id === userId)?.token || null;
         dispatch(setToken({ index, token }));
-        socket.emit("thinkingMove", { index, token });
+        // socket.emit("thinkingMove", { index, token });
       }
     };
 
@@ -82,33 +59,16 @@ const Column = ({ column, index }: ColumnProps) => {
         column.removeEventListener("mouseleave", handleMouseLeave);
       }
     };
-  }, [
-    api,
-    isPlayerTurn,
-    index,
-    socket,
-    dispatch,
-    userId,
-    chat.status,
-    chat.users,
-  ]);
+  }, [isPlayerTurn, index, socket, dispatch, userId, chat.status, chat.users]);
 
   const handleClick = () => {
     isColumnClicked.current = true;
-    const distance = getTokenDropDistance(column);
-    api.start({ opacity: 1, y: distance, display: "block" });
+    dispatch(clickToken());
   };
 
   const canPlay = column.some((t) => t === null);
 
   const disabled = !isPlayerTurn || !canPlay || gameStatus !== "playing";
-
-  const showPlaceholderToken =
-    placeholderToken.index === index &&
-    placeholderToken.token &&
-    gameStatus === "playing";
-
-  console.log({ placeholderToken, showPlaceholderToken });
 
   return (
     <styles.Column
@@ -117,11 +77,6 @@ const Column = ({ column, index }: ColumnProps) => {
       disabled={disabled}
       ref={columnRef}
     >
-      {showPlaceholderToken && (
-        <styles.PlaceholderToken style={springStyles}>
-          <Token token={placeholderToken.token} />
-        </styles.PlaceholderToken>
-      )}
       {column.map((t, i) => (
         <Token key={i} token={t} />
       ))}

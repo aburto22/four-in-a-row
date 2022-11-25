@@ -19,6 +19,7 @@ export const Board = styled.div`
   display: flex;
   background-color: ${colors.board};
   border: 5px solid ${colors.boardBorder};
+  position: relative;
 `;
 
 interface ButtonProps {
