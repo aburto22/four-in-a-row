@@ -6,6 +6,8 @@ import { getTokenDropDistance } from "@lib/game";
 import { useSocketContext } from "@context/SocketContext";
 import { useSpring, easings } from "@react-spring/web";
 import * as styles from "./styles";
+import { useDispatch } from "react-redux";
+import { setToken } from "@slices/placeholderToken";
 
 interface ColumnProps {
   column: IColumn;
@@ -18,13 +20,15 @@ const Column = ({ column, index }: ColumnProps) => {
   const activePlayerId = useAppSelector((state) => state.game.activePlayerId);
   const userId = useAppSelector((state) => state.game.myId);
   const gameStatus = useAppSelector((state) => state.game.status);
-  const chat = useAppSelector((state) => state.chat);
   const socket = useSocketContext();
+  const placeholderToken = useAppSelector((state) => state.placeholderToken);
+  const chat = useAppSelector((state) => state.chat);
+  const dispatch = useDispatch();
 
   const isPlayerTurn = activePlayerId === userId;
 
   const [springStyles, api] = useSpring(() => ({
-    from: { opacity: 0, y: -48, display: "none" },
+    from: { opacity: 1, y: -48, display: "block" },
     config: {
       tension: 160,
       friction: 12,
@@ -34,8 +38,10 @@ const Column = ({ column, index }: ColumnProps) => {
     onRest: () => {
       if (isColumnClicked.current) {
         isColumnClicked.current = false;
-        api.start({ opacity: 0, y: -48, display: "none" });
+        api.start({ opacity: 1, y: -48, display: "block" });
         socket.emit("playToken", index);
+        socket.emit("thinkingMove", { index, token: null });
+        dispatch(setToken({ index, token: null }));
       }
     },
   }));
@@ -44,15 +50,24 @@ const Column = ({ column, index }: ColumnProps) => {
     const column = columnRef.current;
 
     const handleMouseEnter = () => {
-      if (!isColumnClicked.current && isPlayerTurn) {
-        api.start({ opacity: 1, display: "block", y: -48 });
-        socket.emit("thinkingMove", index);
+      // if (!isColumnClicked.current && isPlayerTurn) {
+      //   api.start({ opacity: 1, display: "block", y: -48 });
+      //   socket.emit("thinkingMove", index);
+      // }
+      if (chat.status === "playing") {
+        const token = chat.users.find((p) => p.id === userId)?.token || null;
+        dispatch(setToken({ index, token }));
+        socket.emit("thinkingMove", { index, token });
       }
     };
 
     const handleMouseLeave = () => {
-      if (!isColumnClicked.current && isPlayerTurn) {
-        api.start({ opacity: 0, display: "none", y: -48 });
+      // if (!isColumnClicked.current && isPlayerTurn) {
+      //   api.start({ opacity: 0, display: "none", y: -48 });
+      // }
+      if (chat.status === "playing") {
+        dispatch(setToken({ index, token: null }));
+        socket.emit("thinkingMove", { index, token: null });
       }
     };
 
@@ -67,7 +82,16 @@ const Column = ({ column, index }: ColumnProps) => {
         column.removeEventListener("mouseleave", handleMouseLeave);
       }
     };
-  }, [api, isPlayerTurn, index, socket]);
+  }, [
+    api,
+    isPlayerTurn,
+    index,
+    socket,
+    dispatch,
+    userId,
+    chat.status,
+    chat.users,
+  ]);
 
   const handleClick = () => {
     isColumnClicked.current = true;
@@ -79,12 +103,12 @@ const Column = ({ column, index }: ColumnProps) => {
 
   const disabled = !isPlayerTurn || !canPlay || gameStatus !== "playing";
 
-  const playerColor =
-    chat.status === "playing"
-      ? chat.users.find((u) => u.id === userId)?.token
-      : undefined;
+  const showPlaceholderToken =
+    placeholderToken.index === index &&
+    placeholderToken.token &&
+    gameStatus === "playing";
 
-  const showPlaceholderToken = playerColor && !disabled;
+  console.log({ placeholderToken, showPlaceholderToken });
 
   return (
     <styles.Column
@@ -95,7 +119,7 @@ const Column = ({ column, index }: ColumnProps) => {
     >
       {showPlaceholderToken && (
         <styles.PlaceholderToken style={springStyles}>
-          <Token token={playerColor} />
+          <Token token={placeholderToken.token} />
         </styles.PlaceholderToken>
       )}
       {column.map((t, i) => (

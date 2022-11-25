@@ -94,7 +94,7 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("thinkingMove", (index) => {
+  socket.on("thinkingMove", (data) => {
     const room = getGameRoomByUserId(user.id);
 
     if (!room) {
@@ -102,7 +102,7 @@ io.on("connection", (socket) => {
       return;
     }
 
-    socket.in(room.id).emit("thinkingMove", index);
+    socket.in(room.id).emit("thinkingMove", data);
   });
 
   socket.on("playToken", (index) => {
