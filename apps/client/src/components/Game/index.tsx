@@ -50,11 +50,9 @@ const Game = () => {
 
     socketServer.on("play", (game) => {
       dispatch(clickToken(game));
-      // dispatch(updateGame(game));
     });
 
     socketServer.on("thinkingMove", (data) => {
-      console.log("got thinking");
       dispatch(setToken(data));
     });
 

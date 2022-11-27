@@ -19,6 +19,7 @@ const Column = ({ column, index }: ColumnProps) => {
   const socket = useSocketContext();
   const chat = useAppSelector((state) => state.chat);
   const dispatch = useAppDispatch();
+  const isClicked = useAppSelector((state) => state.placeholderToken.isClicked);
 
   const isPlayerTurn = activePlayerId === userId;
 
@@ -26,7 +27,7 @@ const Column = ({ column, index }: ColumnProps) => {
     const column = columnRef.current;
 
     const handleMouseEnter = () => {
-      if (chat.status === "playing") {
+      if (chat.status === "playing" && !isClicked) {
         const token = chat.users.find((p) => p.id === userId)?.token || null;
         dispatch(setToken({ index, token, display: true }));
         socket.emit("thinkingMove", {
@@ -37,30 +38,25 @@ const Column = ({ column, index }: ColumnProps) => {
       }
     };
 
-    const handleMouseLeave = () => {
-      if (chat.status === "playing") {
-        const token = chat.users.find((p) => p.id === userId)?.token || null;
-        dispatch(setToken({ index, token, display: false }));
-        socket.emit("thinkingMove", {
-          index,
-          token,
-          display: false,
-        });
-      }
-    };
-
     if (column) {
       column.addEventListener("mouseenter", handleMouseEnter);
-      column.addEventListener("mouseleave", handleMouseLeave);
     }
 
     return () => {
       if (column) {
         column.removeEventListener("mouseenter", handleMouseEnter);
-        column.removeEventListener("mouseleave", handleMouseLeave);
       }
     };
-  }, [isPlayerTurn, index, socket, dispatch, userId, chat.status, chat.users]);
+  }, [
+    isPlayerTurn,
+    index,
+    socket,
+    dispatch,
+    userId,
+    chat.status,
+    chat.users,
+    isClicked,
+  ]);
 
   const handleClick = () => {
     socket.emit("playToken", index);

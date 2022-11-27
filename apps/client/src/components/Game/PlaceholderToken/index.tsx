@@ -9,10 +9,10 @@ import { resetToken } from "@slices/placeholderToken";
 import { updateGame } from "@slices/game";
 
 const PlaceholderToken = () => {
-  const placeholderToken = useAppSelector((state) => state.placeholderToken);
-  const column = useAppSelector(
-    (state) => state.game.board[placeholderToken.index]
+  const { index, isClicked, token, nextAction, display } = useAppSelector(
+    (state) => state.placeholderToken
   );
+  const column = useAppSelector((state) => state.game.board[index]);
   const dispatch = useAppDispatch();
   const socket = useSocketContext();
 
@@ -28,13 +28,13 @@ const PlaceholderToken = () => {
 
   useEffect(() => {
     api.start({
-      x: getTokenSideDistance(placeholderToken.index),
+      x: getTokenSideDistance(index),
       config: { duration: 0 },
     });
-  }, [placeholderToken.index, api]);
+  }, [index, api]);
 
   useEffect(() => {
-    if (!placeholderToken.isClicked) {
+    if (!isClicked) {
       return;
     }
 
@@ -43,31 +43,19 @@ const PlaceholderToken = () => {
       y: getTokenDropDistance(column),
       config: { duration: undefined },
       onRest: () => {
-        const index = placeholderToken.index;
-
         api.resume(["x"]);
         api.start({ y: -48, config: { duration: 0 } });
         socket.emit("thinkingMove", { index, token: null, display: false });
         dispatch(resetToken());
 
-        if (placeholderToken.nextAction) {
-          dispatch(updateGame(placeholderToken.nextAction));
+        if (nextAction) {
+          dispatch(updateGame(nextAction));
         }
       },
     });
-  }, [
-    placeholderToken.isClicked,
-    column,
-    api,
-    dispatch,
-    placeholderToken.index,
-    socket,
-    placeholderToken.nextAction,
-  ]);
+  }, [isClicked, column, api, socket, dispatch, index, nextAction]);
 
-  const showPlaceholderToken =
-    placeholderToken.token &&
-    (placeholderToken.display || placeholderToken.isClicked);
+  const showPlaceholderToken = token && (display || isClicked);
 
   if (!showPlaceholderToken) {
     return null;
@@ -75,7 +63,7 @@ const PlaceholderToken = () => {
 
   return (
     <styles.PlaceholderToken style={springStyles}>
-      <Token token={placeholderToken.token} />
+      <Token token={token} />
     </styles.PlaceholderToken>
   );
 };
