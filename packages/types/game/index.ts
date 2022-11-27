@@ -60,6 +60,7 @@ export type ServerToClientEvents = {
   message: (message: IMessage) => void;
   updateChatUsers: (data: UpdateChatUsers) => void;
   play: (game: IGame) => void;
+  start: (game: IGame) => void;
   invalidPlay: () => void;
   quitGame: () => void;
   thinkingMove: (data: ThinkingMove) => void;

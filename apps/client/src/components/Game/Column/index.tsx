@@ -4,7 +4,7 @@ import Token from "@components/Game/Token";
 import { IColumn } from "@types";
 import { useSocketContext } from "@context/SocketContext";
 import * as styles from "./styles";
-import { clickToken, setToken } from "@slices/placeholderToken";
+import { setToken } from "@slices/placeholderToken";
 
 interface ColumnProps {
   column: IColumn;
@@ -63,7 +63,7 @@ const Column = ({ column, index }: ColumnProps) => {
   }, [isPlayerTurn, index, socket, dispatch, userId, chat.status, chat.users]);
 
   const handleClick = () => {
-    dispatch(clickToken());
+    socket.emit("playToken", index);
   };
 
   const canPlay = column.some((t) => t === null);

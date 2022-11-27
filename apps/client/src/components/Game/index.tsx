@@ -10,7 +10,7 @@ import Board from "./Board";
 import Waiting from "./Waiting";
 import Aside from "./Aside";
 import * as styles from "./styles";
-import { setToken } from "@slices/placeholderToken";
+import { clickToken, setToken } from "@slices/placeholderToken";
 
 const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL;
 
@@ -44,11 +44,17 @@ const Game = () => {
 
     socketServer.on("message", (message) => dispatch(addMessage(message)));
 
-    socketServer.on("play", (game) => {
+    socketServer.on("start", (game) => {
       dispatch(updateGame(game));
     });
 
+    socketServer.on("play", (game) => {
+      dispatch(clickToken(game));
+      // dispatch(updateGame(game));
+    });
+
     socketServer.on("thinkingMove", (data) => {
+      console.log("got thinking");
       dispatch(setToken(data));
     });
 

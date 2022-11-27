@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { IToken } from "@types";
+import { IToken, IGame } from "@types";
 
 type State = {
   token: IToken | null;
   index: number;
   isClicked: boolean;
   display: boolean;
+  nextAction: IGame | null;
 };
 
 const initialState: State = {
@@ -13,6 +14,7 @@ const initialState: State = {
   index: 0,
   isClicked: false,
   display: false,
+  nextAction: null,
 };
 
 const placeholderTokenSlice = createSlice({
@@ -27,9 +29,10 @@ const placeholderTokenSlice = createSlice({
       ...action.payload,
     }),
     resetToken: () => initialState,
-    clickToken: (state) => ({
+    clickToken: (state, action: PayloadAction<IGame>) => ({
       ...state,
       isClicked: true,
+      nextAction: action.payload,
     }),
   },
 });

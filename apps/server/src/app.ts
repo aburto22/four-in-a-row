@@ -80,7 +80,7 @@ io.on("connection", (socket) => {
       s?.emit("message", createMessage(chatBot, text));
     });
 
-    io.in(room.id).emit("play", room.game);
+    io.in(room.id).emit("start", room.game);
     io.in(room.id).emit("message", createMessage(chatBot, "Game starts now!"));
     io.in(room.id).emit("updateChatUsers", {
       status: "playing",

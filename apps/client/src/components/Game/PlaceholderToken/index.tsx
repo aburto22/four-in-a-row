@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import { getTokenDropDistance, getTokenSideDistance } from "@lib/game";
 import { useSocketContext } from "@context/SocketContext";
 import { resetToken } from "@slices/placeholderToken";
+import { updateGame } from "@slices/game";
 
 const PlaceholderToken = () => {
   const placeholderToken = useAppSelector((state) => state.placeholderToken);
@@ -16,7 +17,7 @@ const PlaceholderToken = () => {
   const socket = useSocketContext();
 
   const [springStyles, api] = useSpring(() => ({
-    from: { opacity: 1, y: -48, x: 0, display: "block" },
+    from: { y: -48, x: 0 },
     config: {
       tension: 160,
       friction: 12,
@@ -37,17 +38,21 @@ const PlaceholderToken = () => {
       return;
     }
 
-    api.pause(["opacity", "x", "display"]);
+    api.pause(["x"]);
     api.start({
       y: getTokenDropDistance(column),
+      config: { duration: undefined },
       onRest: () => {
         const index = placeholderToken.index;
 
-        api.resume(["opacity", "x", "display"]);
-        api.start({ opacity: 1, y: -48, display: "block" });
-        socket.emit("playToken", index);
+        api.resume(["x"]);
+        api.start({ y: -48, config: { duration: 0 } });
         socket.emit("thinkingMove", { index, token: null, display: false });
         dispatch(resetToken());
+
+        if (placeholderToken.nextAction) {
+          dispatch(updateGame(placeholderToken.nextAction));
+        }
       },
     });
   }, [
@@ -57,6 +62,7 @@ const PlaceholderToken = () => {
     dispatch,
     placeholderToken.index,
     socket,
+    placeholderToken.nextAction,
   ]);
 
   const showPlaceholderToken =
