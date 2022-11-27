@@ -19,7 +19,7 @@ export const getTokenDropDistance = (column: IColumn): number => {
     return 0;
   }
 
-  return (column.length - index - 1) * (0.5 + 2) * 16;
+  return ((column.length - index - 1) * (0.5 + 2) + 0.3) * 16 + 1;
 };
 
 export const getTokenSideDistance = (columnIndex: number): number => {

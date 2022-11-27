@@ -43,6 +43,7 @@ export type UpdateChatUsers = UpdateChatUsersGame | UpdateChatUsersWaiting;
 export type ThinkingMove = {
   index: number;
   token: IToken | null;
+  display: boolean;
 };
 
 export type ClientToServerEvents = {

@@ -5,12 +5,14 @@ type State = {
   token: IToken | null;
   index: number;
   isClicked: boolean;
+  display: boolean;
 };
 
 const initialState: State = {
   token: null,
   index: 0,
   isClicked: false,
+  display: false,
 };
 
 const placeholderTokenSlice = createSlice({
@@ -19,7 +21,7 @@ const placeholderTokenSlice = createSlice({
   reducers: {
     setToken: (
       state,
-      action: PayloadAction<Pick<State, "index" | "token">>
+      action: PayloadAction<Pick<State, "index" | "token" | "display">>
     ) => ({
       ...state,
       ...action.payload,

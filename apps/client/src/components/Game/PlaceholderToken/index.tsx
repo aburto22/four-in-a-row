@@ -1,15 +1,19 @@
 import * as styles from "./styles";
 import { useSpring, easings } from "@react-spring/web";
-import { useAppSelector } from "@hooks/redux";
+import { useAppDispatch, useAppSelector } from "@hooks/redux";
 import Token from "../Token";
 import { useEffect } from "react";
 import { getTokenDropDistance, getTokenSideDistance } from "@lib/game";
+import { useSocketContext } from "@context/SocketContext";
+import { resetToken } from "@slices/placeholderToken";
 
 const PlaceholderToken = () => {
   const placeholderToken = useAppSelector((state) => state.placeholderToken);
   const column = useAppSelector(
     (state) => state.game.board[placeholderToken.index]
   );
+  const dispatch = useAppDispatch();
+  const socket = useSocketContext();
 
   const [springStyles, api] = useSpring(() => ({
     from: { opacity: 1, y: -48, x: 0, display: "block" },
@@ -18,15 +22,6 @@ const PlaceholderToken = () => {
       friction: 12,
       bounce: 1.3,
       easing: easings.easeOutBounce,
-    },
-    onRest: () => {
-      // if (isColumnClicked.current) {
-      //   isColumnClicked.current = false;
-      //   api.start({ opacity: 1, y: -48, display: "block" });
-      //   socket.emit("playToken", index);
-      //   socket.emit("thinkingMove", { index, token: null });
-      //   dispatch(setToken({ index, token: null }));
-      // }
     },
   }));
 
@@ -42,12 +37,31 @@ const PlaceholderToken = () => {
       return;
     }
 
+    api.pause(["opacity", "x", "display"]);
     api.start({
       y: getTokenDropDistance(column),
-    });
-  }, [placeholderToken.isClicked, column, api]);
+      onRest: () => {
+        const index = placeholderToken.index;
 
-  const showPlaceholderToken = placeholderToken.token;
+        api.resume(["opacity", "x", "display"]);
+        api.start({ opacity: 1, y: -48, display: "block" });
+        socket.emit("playToken", index);
+        socket.emit("thinkingMove", { index, token: null, display: false });
+        dispatch(resetToken());
+      },
+    });
+  }, [
+    placeholderToken.isClicked,
+    column,
+    api,
+    dispatch,
+    placeholderToken.index,
+    socket,
+  ]);
+
+  const showPlaceholderToken =
+    placeholderToken.token &&
+    (placeholderToken.display || placeholderToken.isClicked);
 
   if (!showPlaceholderToken) {
     return null;

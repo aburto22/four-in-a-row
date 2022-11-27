@@ -13,7 +13,6 @@ interface ColumnProps {
 
 const Column = ({ column, index }: ColumnProps) => {
   const columnRef = useRef<HTMLButtonElement | null>(null);
-  const isColumnClicked = useRef(false);
   const activePlayerId = useAppSelector((state) => state.game.activePlayerId);
   const userId = useAppSelector((state) => state.game.myId);
   const gameStatus = useAppSelector((state) => state.game.status);
@@ -27,24 +26,26 @@ const Column = ({ column, index }: ColumnProps) => {
     const column = columnRef.current;
 
     const handleMouseEnter = () => {
-      // if (!isColumnClicked.current && isPlayerTurn) {
-      //   api.start({ opacity: 1, display: "block", y: -48 });
-      //   socket.emit("thinkingMove", index);
-      // }
       if (chat.status === "playing") {
         const token = chat.users.find((p) => p.id === userId)?.token || null;
-        dispatch(setToken({ index, token }));
-        // socket.emit("thinkingMove", { index, token });
+        dispatch(setToken({ index, token, display: true }));
+        socket.emit("thinkingMove", {
+          index,
+          token,
+          display: true,
+        });
       }
     };
 
     const handleMouseLeave = () => {
-      // if (!isColumnClicked.current && isPlayerTurn) {
-      //   api.start({ opacity: 0, display: "none", y: -48 });
-      // }
       if (chat.status === "playing") {
-        dispatch(setToken({ index, token: null }));
-        socket.emit("thinkingMove", { index, token: null });
+        const token = chat.users.find((p) => p.id === userId)?.token || null;
+        dispatch(setToken({ index, token, display: false }));
+        socket.emit("thinkingMove", {
+          index,
+          token,
+          display: false,
+        });
       }
     };
 
@@ -62,7 +63,6 @@ const Column = ({ column, index }: ColumnProps) => {
   }, [isPlayerTurn, index, socket, dispatch, userId, chat.status, chat.users]);
 
   const handleClick = () => {
-    isColumnClicked.current = true;
     dispatch(clickToken());
   };
 
