@@ -13,13 +13,22 @@ const Board = () => {
   const socket = useSocketContext();
   const dispatch = useAppDispatch();
   const chat = useAppSelector((state) => state.chat);
-  const { token, index } = useAppSelector((state) => state.placeholderToken);
+  const { token, index, isClicked } = useAppSelector(
+    (state) => state.placeholderToken
+  );
+  const isPlayerTurn = useAppSelector(
+    (state) => state.game.myId === state.game.activePlayerId
+  );
+
+  const shouldEmitEvent =
+    chat.status === "playing" && isPlayerTurn && !isClicked;
 
   useEffect(() => {
     const boardElement = boardRef.current;
 
     const handleMouseLeave = () => {
-      if (chat.status === "playing") {
+      if (shouldEmitEvent) {
+        console.log("running");
         dispatch(setToken({ index, token, display: false }));
         socket.emit("thinkingMove", {
           index,
@@ -38,7 +47,7 @@ const Board = () => {
         boardElement.removeEventListener("mouseleave", handleMouseLeave);
       }
     };
-  }, [chat.status, socket, dispatch, index, token]);
+  }, [socket, dispatch, index, token, shouldEmitEvent]);
 
   const Columns = board.map((c, i) => <Column key={i} column={c} index={i} />);
 

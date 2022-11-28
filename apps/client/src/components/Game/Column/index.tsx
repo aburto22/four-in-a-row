@@ -47,16 +47,7 @@ const Column = ({ column, index }: ColumnProps) => {
         column.removeEventListener("mouseenter", handleMouseEnter);
       }
     };
-  }, [
-    isPlayerTurn,
-    index,
-    socket,
-    dispatch,
-    userId,
-    chat.status,
-    chat.users,
-    isClicked,
-  ]);
+  }, [index, socket, dispatch, userId, chat.status, chat.users, isClicked]);
 
   const handleClick = () => {
     socket.emit("playToken", index);
@@ -64,7 +55,8 @@ const Column = ({ column, index }: ColumnProps) => {
 
   const canPlay = column.some((t) => t === null);
 
-  const disabled = !isPlayerTurn || !canPlay || gameStatus !== "playing";
+  const disabled =
+    !isPlayerTurn || !canPlay || gameStatus !== "playing" || isClicked;
 
   return (
     <styles.Column
